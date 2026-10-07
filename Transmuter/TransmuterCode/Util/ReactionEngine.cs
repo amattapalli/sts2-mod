@@ -38,9 +38,17 @@ public static class ReactionEngine
         Creature target,
         Creature? applier,
         ReagentType type,
-        int amount)
+        int amount,
+        bool resolveReactions = true)
     {
-        await ApplyReagentInternal(ctx, target, applier, type, amount, includeEmeraldBonus: true);
+        await ApplyReagentInternal(
+            ctx,
+            target,
+            applier,
+            type,
+            amount,
+            includeEmeraldBonus: true,
+            resolveReactions: resolveReactions);
     }
 
     private static async Task ApplyReagentInternal(
@@ -49,7 +57,8 @@ public static class ReactionEngine
         Creature? applier,
         ReagentType type,
         int amount,
-        bool includeEmeraldBonus)
+        bool includeEmeraldBonus,
+        bool resolveReactions = true)
     {
         if (amount <= 0 || !target.IsAlive)
             return;
@@ -78,7 +87,10 @@ public static class ReactionEngine
                 break;
         }
 
-        await ResolveReactions(ctx, target, applier);
+        if (resolveReactions)
+        {
+            await ResolveReactions(ctx, target, applier);
+        }
     }
 
     /// <summary>
@@ -115,7 +127,7 @@ public static class ReactionEngine
         if (potency <= 0)
             return;
 
-        await ConsumeAllReagents(ctx, target, applier);
+        await ConsumeAllReagents(ctx, target, applier, firstReagent);
 
         int triggers = GetReactionTriggerCount(applier);
         for (int i = 0; i < triggers; i++)
@@ -159,13 +171,14 @@ public static class ReactionEngine
     /// <summary>
     /// Consumes all Salt, Sulfur, Mercury, and <see cref="StabilizedPower"/> on <paramref name="target"/>
     /// and fires Detonate, Calcify, and Dissolve simultaneously at full combined potency X.
+    /// Requires all 3 distinct Reagents to be present.
     /// </summary>
     public static async Task TriggerMagnumOpus(
         PlayerChoiceContext ctx,
         Creature target,
         Creature? applier)
     {
-        if (!target.IsAlive)
+        if (!target.IsAlive || GetDistinctReagentTypes(target) < 3)
             return;
 
         int potency = GetTotalReagentCount(target);
@@ -179,7 +192,7 @@ public static class ReactionEngine
             await PowerCmd.Remove(stabilized);
         }
 
-        await ConsumeAllReagents(ctx, target, applier);
+        await ConsumeAllReagents(ctx, target, applier, firstReagent);
 
         int triggers = GetReactionTriggerCount(applier);
         for (int i = 0; i < triggers; i++)
@@ -302,26 +315,26 @@ public static class ReactionEngine
 
     /// <summary>
     /// Triggers a Reaction on <paramref name="target"/> if it has 2+ stacks of a single Reagent,
-    /// treating the reaction as if 1 stack of Salt was applied.
+    /// treating the reaction as if 1 stack of Salt was applied. Returns true if a Reaction triggered.
     /// </summary>
-    public static async Task SelfReactSingleReagent(
+    public static async Task<bool> SelfReactSingleReagent(
         PlayerChoiceContext ctx,
         Creature target,
         Creature? applier)
     {
         if (!target.IsAlive || GetDistinctReagentTypes(target) != 1)
-            return;
+            return false;
 
         ReagentType? activeType = GetFirstExistingReagentType(target);
         if (activeType == null)
-            return;
+            return false;
 
         int currentStacks = GetReagentAmount(target, activeType.Value);
         if (currentStacks < 2)
-            return;
+            return false;
 
         int potency = currentStacks + 1;
-        await ConsumeAllReagents(ctx, target, applier);
+        await ConsumeAllReagents(ctx, target, applier, activeType);
 
         int triggers = GetReactionTriggerCount(applier);
         for (int i = 0; i < triggers; i++)
@@ -337,6 +350,7 @@ public static class ReactionEngine
         }
 
         await ExecutePostReactionHooks(ctx, target, applier, activeType);
+        return true;
     }
 
     private static int GetReactionTriggerCount(Creature? applier)
@@ -381,14 +395,17 @@ public static class ReactionEngine
     private static async Task ConsumeAllReagents(
         PlayerChoiceContext ctx,
         Creature target,
-        Creature? applier)
+        Creature? applier,
+        ReagentType? firstReagent)
     {
         ParacelsusScalpel? scalpel = applier?.Player?.GetRelic<ParacelsusScalpel>();
-        bool leaveOneBehind = scalpel != null;
-        if (leaveOneBehind)
+        bool leaveFirstBehind = scalpel != null && firstReagent.HasValue;
+        if (leaveFirstBehind)
         {
             scalpel!.Flash();
         }
+
+        PowerModel? retainedPower = leaveFirstBehind ? GetReagentPower(target, firstReagent!.Value) : null;
 
         PowerModel?[] reagentPowers =
         [
@@ -402,7 +419,7 @@ public static class ReactionEngine
             if (power == null || power.Amount <= 0)
                 continue;
 
-            if (leaveOneBehind)
+            if (ReferenceEquals(power, retainedPower))
             {
                 int excess = power.Amount - 1;
                 if (excess > 0)
@@ -539,7 +556,8 @@ public static class ReactionEngine
                 applier,
                 firstConsumed.Value,
                 residualPrecipitate.Amount,
-                includeEmeraldBonus: false);
+                includeEmeraldBonus: false,
+                resolveReactions: false);
         }
     }
 }

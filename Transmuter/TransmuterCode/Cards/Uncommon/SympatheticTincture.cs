@@ -12,7 +12,7 @@ namespace Transmuter.TransmuterCode.Cards;
 
 /// <summary>
 /// Sympathetic Tincture — Uncommon Skill, cost 1, AnyEnemy.
-/// Count distinct debuffs (PowerType.Debuff) on target; for each, apply 2 (3) Sulfur.
+/// Count distinct debuffs (PowerType.Debuff) on target; for each, apply 2 (3) Sulfur in a single application.
 /// </summary>
 public sealed class SympatheticTincture() : TransmuterCard(1, CardType.Skill, CardRarity.Uncommon, TargetType.AnyEnemy)
 {
@@ -31,17 +31,15 @@ public sealed class SympatheticTincture() : TransmuterCard(1, CardType.Skill, Ca
             .Distinct()
             .Count();
 
-        for (int i = 0; i < distinctDebuffs; i++)
+        int totalSulfur = distinctDebuffs * DynamicVars["Sulfur"].IntValue;
+        if (totalSulfur > 0 && play.Target.IsAlive)
         {
-            if (!play.Target.IsAlive)
-                break;
-
             await ReactionEngine.ApplyReagent(
                 choiceContext,
                 play.Target,
                 Owner.Creature,
                 ReagentType.Sulfur,
-                DynamicVars["Sulfur"].IntValue);
+                totalSulfur);
         }
     }
 

@@ -1,6 +1,6 @@
 {
   "TRANSMUTER-CRACKED_ALEMBIC.title": "Cracked Alembic",
-  "TRANSMUTER-CRACKED_ALEMBIC.description": "At the start of combat, apply [blue]2[/blue] [gold]Sulfur[/gold] to a random enemy. The first [gold]Reaction[/gold] you trigger each combat grants {energyPrefix:energyIcons(1)} and draws [blue]1[/blue] card.",
+  "TRANSMUTER-CRACKED_ALEMBIC.description": "At the start of combat, apply [blue]2[/blue] [gold]Mercury[/gold] to a random enemy. The first [gold]Reaction[/gold] you trigger each combat grants {energyPrefix:energyIcons(1)} and draws [blue]1[/blue] card.",
   "TRANSMUTER-CRACKED_ALEMBIC.flavor": "Even fractured glass remembers the heat of the first distillation.",
 
   "TRANSMUTER-OUROBOROS_RING.title": "Ouroboros Ring",
@@ -8,7 +8,7 @@
   "TRANSMUTER-OUROBOROS_RING.flavor": "The serpent devours its tail; nothing in the vessel is ever truly lost.",
 
   "TRANSMUTER-PARACELSUS_SCALPEL.title": "Paracelsus's Scalpel",
-  "TRANSMUTER-PARACELSUS_SCALPEL.description": "[gold]Reactions[/gold] leave [blue]1[/blue] stack of each reacting [gold]Reagent[/gold] behind instead of consuming all stacks.",
+  "TRANSMUTER-PARACELSUS_SCALPEL.description": "[gold]Reactions[/gold] leave [blue]1[/blue] stack of the first reacting [gold]Reagent[/gold] behind instead of consuming all stacks.",
   "TRANSMUTER-PARACELSUS_SCALPEL.flavor": "The dose alone makes the poison—and the remnant makes the catalyst.",
 
   "SEA_GLASS.TRANSMUTER-TRANSMUTER.title": "Alchemical Glass"

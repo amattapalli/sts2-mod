@@ -52,7 +52,12 @@ public sealed class SimCombatState
 
     public List<SimEnemy> Enemies { get; } = new();
 
-    public void ApplyReagent(SimEnemy target, SimReagentType type, int baseAmount, bool isResidueReapply = false)
+    public void ApplyReagent(
+        SimEnemy target,
+        SimReagentType type,
+        int baseAmount,
+        bool isResidueReapply = false,
+        bool resolveReactions = true)
     {
         if (baseAmount <= 0)
             return;
@@ -64,7 +69,10 @@ public sealed class SimCombatState
         }
         target.Reagents[type] += finalAmount;
 
-        ResolveReactions(target);
+        if (resolveReactions)
+        {
+            ResolveReactions(target);
+        }
     }
 
     public void ApplyStabilize(SimEnemy target, int turns = 1)
@@ -96,7 +104,7 @@ public sealed class SimCombatState
         SimReagentType firstConsumed = target.ApplicationOrder.First(t => target.GetReagent(t) > 0);
         int potency = target.TotalReagentStacks;
 
-        ConsumeReactingReagents(target, [SimReagentType.Salt, SimReagentType.Sulfur, SimReagentType.Mercury]);
+        ConsumeReactingReagents(target, firstConsumed);
 
         int triggerCount = 1 + PhilosophersEngineStacks;
         for (int i = 0; i < triggerCount; i++)
@@ -114,6 +122,9 @@ public sealed class SimCombatState
 
     public void TriggerMagnumOpus(SimEnemy target)
     {
+        if (target.DistinctReagentCount < 3)
+            return;
+
         int potency = target.TotalReagentStacks;
         if (potency <= 0)
             return;
@@ -123,7 +134,7 @@ public sealed class SimCombatState
             SimReagentType.Sulfur);
 
         target.StabilizedTurns = 0;
-        ConsumeReactingReagents(target, [SimReagentType.Salt, SimReagentType.Sulfur, SimReagentType.Mercury]);
+        ConsumeReactingReagents(target, firstConsumed);
 
         int triggerCount = 1 + PhilosophersEngineStacks;
         for (int i = 0; i < triggerCount; i++)
@@ -150,16 +161,19 @@ public sealed class SimCombatState
         }
     }
 
-    public void SelfReactSingleReagent(SimEnemy target)
+    public bool SelfReactSingleReagent(SimEnemy target)
     {
         if (target.DistinctReagentCount != 1)
-            return;
+            return false;
 
-        var active = target.Reagents.First(kv => kv.Value >= 2);
+        var active = target.Reagents.FirstOrDefault(kv => kv.Value >= 2);
+        if (active.Value < 2)
+            return false;
+
         SimReagentType existingType = active.Key;
         int potency = active.Value + 1;
 
-        ConsumeReactingReagents(target, [existingType]);
+        ConsumeReactingReagents(target, existingType);
 
         int triggerCount = 1 + PhilosophersEngineStacks;
         for (int i = 0; i < triggerCount; i++)
@@ -173,18 +187,25 @@ public sealed class SimCombatState
         }
 
         ExecutePostReactionHooks(target, existingType);
+        return true;
     }
 
-    private void ConsumeReactingReagents(SimEnemy target, IEnumerable<SimReagentType> types)
+    private void ConsumeReactingReagents(SimEnemy target, SimReagentType firstConsumed)
     {
-        int floor = HasParacelsusScalpel ? 1 : 0;
-        foreach (var type in types)
+        SimReagentType[] allTypes = [SimReagentType.Salt, SimReagentType.Sulfur, SimReagentType.Mercury];
+        foreach (var type in allTypes)
         {
             if (target.Reagents[type] > 0)
             {
-                target.Reagents[type] = Math.Min(target.Reagents[type], floor);
-                if (target.Reagents[type] == 0)
+                if (HasParacelsusScalpel && type == firstConsumed)
+                {
+                    target.Reagents[type] = 1;
+                }
+                else
+                {
+                    target.Reagents[type] = 0;
                     target.ApplicationOrder.Remove(type);
+                }
             }
         }
     }
@@ -233,7 +254,12 @@ public sealed class SimCombatState
 
         if (ResidualPrecipitateStacks > 0)
         {
-            ApplyReagent(target, firstConsumed, ResidualPrecipitateStacks, isResidueReapply: true);
+            ApplyReagent(
+                target,
+                firstConsumed,
+                ResidualPrecipitateStacks,
+                isResidueReapply: true,
+                resolveReactions: false);
         }
     }
 
@@ -387,9 +413,13 @@ public class ReactionSimulationTests
     }
 
     [Fact]
-    public void ParacelsusScalpel_LeavesOneStackOfEachReactingReagentBehind()
+    public void ParacelsusScalpel_LeavesOneStackOfFirstReactingReagentBehind_AndDoesNotInfiniteLoopWithResidualPrecipitate()
     {
-        var state = new SimCombatState { HasParacelsusScalpel = true };
+        var state = new SimCombatState
+        {
+            HasParacelsusScalpel = true,
+            ResidualPrecipitateStacks = 2
+        };
         var enemy = new SimEnemy { Hp = 100 };
         state.Enemies.Add(enemy);
 
@@ -397,8 +427,10 @@ public class ReactionSimulationTests
         state.ApplyReagent(enemy, SimReagentType.Mercury, 2); // X = 6 Detonate
 
         Assert.Equal(100 - 18, enemy.Hp);
-        Assert.Equal(1, enemy.GetReagent(SimReagentType.Sulfur));
-        Assert.Equal(1, enemy.GetReagent(SimReagentType.Mercury));
+        // Scalpel leaves 1 Sulfur + ResidualPrecipitate adds 2 Sulfur => 3 Sulfur, 0 Mercury (distinct == 1, no infinite loop!)
+        Assert.Equal(3, enemy.GetReagent(SimReagentType.Sulfur));
+        Assert.Equal(0, enemy.GetReagent(SimReagentType.Mercury));
+        Assert.Equal(1, enemy.DistinctReagentCount);
     }
 
     [Fact]

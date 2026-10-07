@@ -11,7 +11,7 @@ using Transmuter.TransmuterCode.Util;
 namespace Transmuter.TransmuterCode.Cards;
 
 /// <summary>
-/// Saline Solution — Basic Skill, cost 1. Gain 5 (7) Block. Apply 2 (3) Salt and 1 (2) Mercury to target.
+/// Saline Solution — Basic Skill, cost 1. Gain 5 (7) Block. Apply 2 (3) Salt to target.
 /// </summary>
 public sealed class SalineSolution() : TransmuterCard(1, CardType.Skill, CardRarity.Basic, TargetType.AnyEnemy)
 {
@@ -20,8 +20,7 @@ public sealed class SalineSolution() : TransmuterCard(1, CardType.Skill, CardRar
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
         new BlockVar(5m, ValueProp.Move),
-        new DynamicVar("Salt", 2m),
-        new DynamicVar("Mercury", 1m)
+        new DynamicVar("Salt", 2m)
     ];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
@@ -35,18 +34,11 @@ public sealed class SalineSolution() : TransmuterCard(1, CardType.Skill, CardRar
             Owner.Creature,
             ReagentType.Salt,
             DynamicVars["Salt"].IntValue);
-        await ReactionEngine.ApplyReagent(
-            choiceContext,
-            play.Target,
-            Owner.Creature,
-            ReagentType.Mercury,
-            DynamicVars["Mercury"].IntValue);
     }
 
     protected override void OnUpgrade()
     {
         DynamicVars.Block.UpgradeValueBy(2m);
         DynamicVars["Salt"].UpgradeValueBy(1m);
-        DynamicVars["Mercury"].UpgradeValueBy(1m);
     }
 }

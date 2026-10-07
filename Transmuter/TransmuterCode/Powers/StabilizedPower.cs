@@ -11,12 +11,12 @@ using Transmuter.TransmuterCode.Util;
 namespace Transmuter.TransmuterCode.Powers;
 
 /// <summary>
-/// Stabilized — Pauses 2-Reagent Reactions on the owner until end of turn,
+/// Stabilized — Pauses 2-Reagent Reactions on the owner until the end of the player's turn,
 /// allowing all 3 Reagents to accumulate for Magnum Opus.
 /// </summary>
 public sealed class StabilizedPower : TransmuterPower
 {
-    public override PowerType Type => PowerType.Debuff;
+    public override PowerType Type => PowerType.Buff;
 
     public override PowerStackType StackType => PowerStackType.Counter;
 
@@ -25,7 +25,7 @@ public sealed class StabilizedPower : TransmuterPower
         CombatSide side,
         IEnumerable<Creature> participants)
     {
-        if (side != Owner.Side || !Owner.IsAlive)
+        if (side != CombatSide.Player || !Owner.IsAlive)
             return;
 
         Flash();

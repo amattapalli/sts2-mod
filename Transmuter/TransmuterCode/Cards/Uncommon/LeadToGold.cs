@@ -11,7 +11,8 @@ namespace Transmuter.TransmuterCode.Cards;
 
 /// <summary>
 /// Lead to Gold — Uncommon Skill, cost 1 (0). Exhaust.
-/// Trigger a Reaction on an enemy with 2+ stacks of a single Reagent as if 1 Salt was applied. Gain 5 (8) Gold.
+/// Trigger a Reaction on an enemy with 2+ stacks of a single Reagent as if 1 Salt was applied.
+/// If a Reaction triggered, gain 5 (8) Gold.
 /// </summary>
 public sealed class LeadToGold() : TransmuterCard(1, CardType.Skill, CardRarity.Uncommon, TargetType.AnyEnemy)
 {
@@ -26,8 +27,11 @@ public sealed class LeadToGold() : TransmuterCard(1, CardType.Skill, CardRarity.
     {
         ArgumentNullException.ThrowIfNull(play.Target);
 
-        await ReactionEngine.SelfReactSingleReagent(choiceContext, play.Target, Owner.Creature);
-        await PlayerCmd.GainGold(DynamicVars.Gold.IntValue, Owner);
+        bool triggered = await ReactionEngine.SelfReactSingleReagent(choiceContext, play.Target, Owner.Creature);
+        if (triggered)
+        {
+            await PlayerCmd.GainGold(DynamicVars.Gold.IntValue, Owner);
+        }
     }
 
     protected override void OnUpgrade()

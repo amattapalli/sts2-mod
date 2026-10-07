@@ -10,14 +10,14 @@ using Transmuter.TransmuterCode.Util;
 namespace Transmuter.TransmuterCode.Cards;
 
 /// <summary>
-/// Quick Primer — Common Skill, cost 0. Apply 1 (2) Mercury. Draw 1 card.
+/// Quick Primer — Common Skill, cost 1. Apply 2 (3) Mercury. Draw 2 cards.
 /// </summary>
-public sealed class QuickPrimer() : TransmuterCard(0, CardType.Skill, CardRarity.Common, TargetType.AnyEnemy)
+public sealed class QuickPrimer() : TransmuterCard(1, CardType.Skill, CardRarity.Common, TargetType.AnyEnemy)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new DynamicVar("Mercury", 1m),
-        new CardsVar(1)
+        new DynamicVar("Mercury", 2m),
+        new CardsVar(2)
     ];
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)

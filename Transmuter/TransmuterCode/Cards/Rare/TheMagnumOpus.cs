@@ -28,10 +28,9 @@ public sealed class TheMagnumOpus() : TransmuterCard(2, CardType.Skill, CardRari
         int amount = DynamicVars["Reagents"].IntValue;
 
         await ReactionEngine.ApplyStabilize(choiceContext, play.Target, Owner.Creature, 1);
-        await ReactionEngine.ApplyReagent(choiceContext, play.Target, Owner.Creature, ReagentType.Salt, amount);
-        await ReactionEngine.ApplyReagent(choiceContext, play.Target, Owner.Creature, ReagentType.Sulfur, amount);
-        await ReactionEngine.ApplyReagent(choiceContext, play.Target, Owner.Creature, ReagentType.Mercury, amount);
-        await ReactionEngine.TriggerMagnumOpus(choiceContext, play.Target, Owner.Creature);
+        await ReactionEngine.ApplyReagent(choiceContext, play.Target, Owner.Creature, ReagentType.Salt, amount, resolveReactions: false);
+        await ReactionEngine.ApplyReagent(choiceContext, play.Target, Owner.Creature, ReagentType.Sulfur, amount, resolveReactions: false);
+        await ReactionEngine.ApplyReagent(choiceContext, play.Target, Owner.Creature, ReagentType.Mercury, amount, resolveReactions: true);
     }
 
     protected override void OnUpgrade()
