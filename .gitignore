@@ -1,0 +1,15 @@
+# Never commit binaries or game DLLs
+*.dll
+*.pdb
+*.pck
+*.exe
+bin/
+obj/
+.godot/
+.vs/
+.idea/
+publish/
+build/
+dist/
+lib/
+local.props
