@@ -1,0 +1,16 @@
+{
+  "TRANSMUTER-TRANSMUTER.title": "The Transmuter",
+  "TRANSMUTER-TRANSMUTER.titleObject": "The Transmuter",
+  "TRANSMUTER-TRANSMUTER.description": "A hermetic alchemist pursuing the Magnum Opus.\nImbues enemies with [gold]Salt[/gold], [gold]Sulfur[/gold], and [gold]Mercury[/gold] to trigger volatile [gold]Reactions[/gold].",
+  "TRANSMUTER-TRANSMUTER.pronounObject": "them",
+  "TRANSMUTER-TRANSMUTER.possessiveAdjective": "their",
+  "TRANSMUTER-TRANSMUTER.pronounPossessive": "theirs",
+  "TRANSMUTER-TRANSMUTER.pronounSubject": "they",
+  "TRANSMUTER-TRANSMUTER.goldMonologue": "Every coin is merely lead that learned ambition.",
+  "TRANSMUTER-TRANSMUTER.eventDeathPrevention": "The Great Work is not yet complete.",
+  "TRANSMUTER-TRANSMUTER.aromaPrinciple": "Solve et Coagula — dissolve the impure, and coagulate the divine.",
+  "TRANSMUTER-TRANSMUTER.cardsModifierTitle": "Transmuter Cards",
+  "TRANSMUTER-TRANSMUTER.cardsModifierDescription": "Transmuter cards will now appear in rewards and shops.",
+  "TRANSMUTER-TRANSMUTER.banter.alive.endTurnPing": "The crucible is still heating...",
+  "TRANSMUTER-TRANSMUTER.banter.dead.endTurnPing": "...ash to ash..."
+}

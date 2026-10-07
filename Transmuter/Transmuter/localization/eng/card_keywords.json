@@ -1,0 +1,25 @@
+{
+  "TRANSMUTER-SULFUR.title": "Sulfur",
+  "TRANSMUTER-SULFUR.description": "Reagent debuff. Deals damage equal to its stacks at the end of the enemy's turn. Combines with [gold]Mercury[/gold] ([gold]Detonate[/gold]) or [gold]Salt[/gold] ([gold]Calcify[/gold]).",
+
+  "TRANSMUTER-MERCURY.title": "Mercury",
+  "TRANSMUTER-MERCURY.description": "Reagent debuff. Enemy takes +1 Attack damage per stack. Combines with [gold]Sulfur[/gold] ([gold]Detonate[/gold]) or [gold]Salt[/gold] ([gold]Dissolve[/gold]).",
+
+  "TRANSMUTER-SALT.title": "Salt",
+  "TRANSMUTER-SALT.description": "Reagent debuff. Hitting this enemy with an Attack grants 1 [gold]Block[/gold] per stack. Combines with [gold]Sulfur[/gold] ([gold]Calcify[/gold]) or [gold]Mercury[/gold] ([gold]Dissolve[/gold]).",
+
+  "TRANSMUTER-STABILIZE.title": "Stabilize",
+  "TRANSMUTER-STABILIZE.description": "Pauses 2-Reagent [gold]Reactions[/gold] on an enemy until end of turn, allowing all 3 [gold]Reagents[/gold] to combine into [gold]Magnum Opus[/gold].",
+
+  "TRANSMUTER-DETONATE.title": "Detonate",
+  "TRANSMUTER-DETONATE.description": "[gold]Sulfur[/gold] + [gold]Mercury[/gold] Reaction (X = total stacks consumed): Deal [blue]3X[/blue] damage to the target and [blue]2X[/blue] damage to ALL other enemies.",
+
+  "TRANSMUTER-CALCIFY.title": "Calcify",
+  "TRANSMUTER-CALCIFY.description": "[gold]Salt[/gold] + [gold]Sulfur[/gold] Reaction (X = total stacks consumed): Gain [blue]2X[/blue] [gold]Block[/gold] and apply [blue]ceil(X/3)[/blue] [gold]Weak[/gold].",
+
+  "TRANSMUTER-DISSOLVE.title": "Dissolve",
+  "TRANSMUTER-DISSOLVE.description": "[gold]Salt[/gold] + [gold]Mercury[/gold] Reaction (X = total stacks consumed): Destroy the target's [gold]Block[/gold], apply [blue]ceil(X/2)[/blue] [gold]Vulnerable[/gold], and draw [blue]1[/blue] card ([blue]2[/blue] if X >= 6).",
+
+  "TRANSMUTER-MAGNUM_OPUS.title": "Magnum Opus",
+  "TRANSMUTER-MAGNUM_OPUS.description": "[gold]Salt[/gold] + [gold]Sulfur[/gold] + [gold]Mercury[/gold] Reaction (X = total stacks consumed): Trigger [gold]Detonate[/gold], [gold]Calcify[/gold], and [gold]Dissolve[/gold] all at once at full potency X."
+}

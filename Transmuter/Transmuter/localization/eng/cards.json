@@ -1,0 +1,95 @@
+{
+  "TRANSMUTER-STRIKE_TRANSMUTER.title": "Strike",
+  "TRANSMUTER-STRIKE_TRANSMUTER.description": "Deal {Damage:diff()} damage.",
+
+  "TRANSMUTER-DEFEND_TRANSMUTER.title": "Defend",
+  "TRANSMUTER-DEFEND_TRANSMUTER.description": "Gain {Block:diff()} [gold]Block[/gold].",
+
+  "TRANSMUTER-BRIMSTONE_TOSS.title": "Brimstone Toss",
+  "TRANSMUTER-BRIMSTONE_TOSS.description": "Deal {Damage:diff()} damage.\nApply {Sulfur:diff()} [gold]Sulfur[/gold].",
+
+  "TRANSMUTER-SALINE_SOLUTION.title": "Saline Solution",
+  "TRANSMUTER-SALINE_SOLUTION.description": "Gain {Block:diff()} [gold]Block[/gold].\nApply {Salt:diff()} [gold]Salt[/gold] and {Mercury:diff()} [gold]Mercury[/gold].",
+
+  "TRANSMUTER-CINNABAR_SLASH.title": "Cinnabar Slash",
+  "TRANSMUTER-CINNABAR_SLASH.description": "Deal {Damage:diff()} damage.\nApply {Mercury:diff()} [gold]Mercury[/gold].",
+
+  "TRANSMUTER-HALITE_BASH.title": "Halite Bash",
+  "TRANSMUTER-HALITE_BASH.description": "Deal {Damage:diff()} damage.\nGain [gold]Block[/gold] equal to the target's [gold]Salt[/gold], then apply {Salt:diff()} [gold]Salt[/gold].",
+
+  "TRANSMUTER-CALCINATION.title": "Calcination",
+  "TRANSMUTER-CALCINATION.description": "Deal {Damage:diff()} damage.\nApply {Sulfur:diff()} [gold]Sulfur[/gold].",
+
+  "TRANSMUTER-QUICK_PRIMER.title": "Quick Primer",
+  "TRANSMUTER-QUICK_PRIMER.description": "Apply {Mercury:diff()} [gold]Mercury[/gold].\nDraw {Cards:diff()} card{Cards:plural:|s}.",
+
+  "TRANSMUTER-SALT_WARD.title": "Salt Ward",
+  "TRANSMUTER-SALT_WARD.description": "Gain {Block:diff()} [gold]Block[/gold].\nApply {Salt:diff()} [gold]Salt[/gold].",
+
+  "TRANSMUTER-FUME_CLOUD.title": "Fume Cloud",
+  "TRANSMUTER-FUME_CLOUD.description": "Apply {Sulfur:diff()} [gold]Sulfur[/gold] to ALL enemies.",
+
+  "TRANSMUTER-GLASS_VIAL.title": "Glass Vial",
+  "TRANSMUTER-GLASS_VIAL.description": "Deal {Damage:diff()} damage.\nApply {Salt:diff()} [gold]Salt[/gold].",
+
+  "TRANSMUTER-DISTILL.title": "Distill",
+  "TRANSMUTER-DISTILL.description": "{IfUpgraded:show:Triple|Double} a single [gold]Reagent[/gold] on an enemy, only if it has 1 [gold]Reagent[/gold] type.",
+
+  "TRANSMUTER-SPLASH_ACID.title": "Splash Acid",
+  "TRANSMUTER-SPLASH_ACID.description": "Deal {Damage:diff()} damage.\nIf the enemy has any [gold]Reagent[/gold], deal {Damage:diff()} damage again.",
+
+  "TRANSMUTER-HERMETIC_SEAL.title": "Hermetic Seal",
+  "TRANSMUTER-HERMETIC_SEAL.description": "Gain {Block:diff()} [gold]Block[/gold].\nApply {Stabilize:diff()} [gold]Stabilize[/gold] to an enemy.",
+
+  "TRANSMUTER-CHAIN_DETONATION.title": "Chain Detonation",
+  "TRANSMUTER-CHAIN_DETONATION.description": "Deal {Damage:diff()} damage.\nApply {Sulfur:diff()} [gold]Sulfur[/gold].\nWhenever [gold]Detonate[/gold] triggers this turn, apply {ChainSulfur:diff()} [gold]Sulfur[/gold] to ALL other enemies.",
+
+  "TRANSMUTER-SUBLIMATE.title": "Sublimate",
+  "TRANSMUTER-SUBLIMATE.description": "Convert all stacks of one [gold]Reagent[/gold] on an enemy into another [gold]Reagent[/gold], then add {BonusStacks:diff()} stacks of it.",
+
+  "TRANSMUTER-QUICKSILVER_NEEDLE.title": "Quicksilver Needle",
+  "TRANSMUTER-QUICKSILVER_NEEDLE.description": "Deal {Damage:diff()} damage twice.\nApply {Mercury:diff()} [gold]Mercury[/gold] on each hit.",
+
+  "TRANSMUTER-LEAD_TO_GOLD.title": "Lead to Gold",
+  "TRANSMUTER-LEAD_TO_GOLD.description": "Trigger a [gold]Reaction[/gold] on an enemy with 2+ stacks of a single [gold]Reagent[/gold] as if 1 [gold]Salt[/gold] was applied.\nGain {Gold:diff()} [gold]Gold[/gold].",
+
+  "TRANSMUTER-VOLATILE_FLASK.title": "Volatile Flask",
+  "TRANSMUTER-VOLATILE_FLASK.description": "Deal {Damage:diff()} damage to ALL enemies.\nApply {Mercury:diff()} [gold]Mercury[/gold] to ALL enemies.",
+
+  "TRANSMUTER-ATHANOR_FURNACE.title": "Athanor Furnace",
+  "TRANSMUTER-ATHANOR_FURNACE.description": "At the start of your turn, apply {Sulfur:diff()} [gold]Sulfur[/gold] to the enemy with the highest HP.",
+
+  "TRANSMUTER-RESIDUAL_PRECIPITATE.title": "Residual Precipitate",
+  "TRANSMUTER-RESIDUAL_PRECIPITATE.description": "Whenever a [gold]Reaction[/gold] triggers on an enemy, reapply {Residue:diff()} stacks of the first [gold]Reagent[/gold] consumed.",
+
+  "TRANSMUTER-SYMPATHETIC_TINCTURE.title": "Sympathetic Tincture",
+  "TRANSMUTER-SYMPATHETIC_TINCTURE.description": "For each unique debuff on the enemy, apply {Sulfur:diff()} [gold]Sulfur[/gold].",
+
+  "TRANSMUTER-CRUCIBLE_SHIELD.title": "Crucible Shield",
+  "TRANSMUTER-CRUCIBLE_SHIELD.description": "Gain {Block:diff()} [gold]Block[/gold].\nWhenever you trigger a [gold]Reaction[/gold] this turn, gain {ReactionBlock:diff()} [gold]Block[/gold].",
+
+  "TRANSMUTER-THE_MAGNUM_OPUS.title": "The Magnum Opus",
+  "TRANSMUTER-THE_MAGNUM_OPUS.description": "Apply [gold]Stabilize[/gold], then apply {Reagents:diff()} [gold]Salt[/gold], {Reagents:diff()} [gold]Sulfur[/gold], and {Reagents:diff()} [gold]Mercury[/gold], then immediately trigger [gold]Magnum Opus[/gold].",
+
+  "TRANSMUTER-PHILOSOPHERS_ENGINE.title": "Philosopher's Engine",
+  "TRANSMUTER-PHILOSOPHERS_ENGINE.description": "Your [gold]Reactions[/gold] trigger twice.",
+
+  "TRANSMUTER-UNIVERSAL_SOLVENT.title": "Universal Solvent",
+  "TRANSMUTER-UNIVERSAL_SOLVENT.description": "Deal {Damage:diff()} damage to ALL enemies.\nRemove all [gold]Artifact[/gold] and [gold]Block[/gold] from ALL enemies, then apply {Salt:diff()} [gold]Salt[/gold] and {Mercury:diff()} [gold]Mercury[/gold] to ALL enemies.",
+
+  "TRANSMUTER-NIGREDO_ALBEDO_RUBEDO.title": "Nigredo, Albedo, Rubedo",
+  "TRANSMUTER-NIGREDO_ALBEDO_RUBEDO.description": "Choose 1 of 3 generated 0-cost cards to add to your [gold]Hand[/gold]: [gold]Nigredo[/gold], [gold]Albedo[/gold], or [gold]Rubedo[/gold].",
+  "TRANSMUTER-NIGREDO_ALBEDO_RUBEDO.selectionScreenPrompt": "Choose a Reagent tincture to add to your Hand.",
+
+  "TRANSMUTER-EMERALD_TABLET.title": "Emerald Tablet",
+  "TRANSMUTER-EMERALD_TABLET.description": "Whenever you apply a [gold]Reagent[/gold], apply +{BonusReagent:diff()} additional stack{BonusReagent:plural:|s}.",
+
+  "TRANSMUTER-NIGREDO_TOKEN.title": "Nigredo",
+  "TRANSMUTER-NIGREDO_TOKEN.description": "Apply {Salt:diff()} [gold]Salt[/gold].",
+
+  "TRANSMUTER-ALBEDO_TOKEN.title": "Albedo",
+  "TRANSMUTER-ALBEDO_TOKEN.description": "Apply {Mercury:diff()} [gold]Mercury[/gold].",
+
+  "TRANSMUTER-RUBEDO_TOKEN.title": "Rubedo",
+  "TRANSMUTER-RUBEDO_TOKEN.description": "Apply {Sulfur:diff()} [gold]Sulfur[/gold]."
+}
