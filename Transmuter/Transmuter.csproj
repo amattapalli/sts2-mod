@@ -1,4 +1,4 @@
-﻿<Project Sdk="Godot.NET.Sdk/4.5.1" InitialTargets="CheckDependencyPaths">
+<Project Sdk="Godot.NET.Sdk/4.5.1" InitialTargets="CheckDependencyPaths">
     <Import Project=".\Sts2PathDiscovery.props"/>
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
@@ -37,8 +37,8 @@
     <ItemGroup>
         <PackageReference Include="Alchyr.Sts2.BaseLib" Version="*" PrivateAssets="All"/>
         <PackageReference Include="Alchyr.Sts2.ModAnalyzers" Version="*" />
-        <!-- Generates a .pck file when building if only using simple assets. May not work on all setups. Uncomment to test. -->
-        <!-- <PackageReference Include="BSchneppe.StS2.PckPacker" Version="0.1.1" PrivateAssets="All" /> -->
+        <!-- Generates a .pck file when building if only using simple assets (JSON localization + PNGs) without needing MegaDot installed. -->
+        <PackageReference Include="BSchneppe.StS2.PckPacker" Version="0.1.1" PrivateAssets="All" />
         <AdditionalFiles Include="Transmuter/localization/**/*.json"/> <!-- Used by analyzer -->
     </ItemGroup>
 
