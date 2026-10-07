@@ -18,7 +18,8 @@ This private repository holds the **100% plain-text C# source code, localization
    ```
    `Sts2PathDiscovery.props` automatically locates your local Steam install (`C:\Program Files (x86)\Steam\steamapps\common\Slay the Spire 2`), compiles the C# source against your local `sts2.dll`, packs `Transmuter.pck` via `BSchneppe.StS2.PckPacker`, and copies the mod straight into your Steam `mods/Transmuter/` folder.
 
-## Design Docs
+## Design & Art Docs
+- [Procreate Art & Game Balancing Guide](docs/sts2_art_and_balancing_guide.md)
 - [The Transmuter — Character & Card Pool Design](docs/sts2_transmuter_design.md)
 - [Modding Toolchain & Architecture Research](docs/sts2_character_mod_research.md)
 - [Character Style & Gimmick Brainstorm](docs/sts2_character_brainstorm.md)
