@@ -11,12 +11,13 @@ namespace Usurer.UsurerCode.Cards;
 
 /// <summary>
 /// Payday — Common Skill, cost 1, AnyEnemy.
-/// Apply 3 (4) Lien. Draw 2 cards.
+/// Gain 5 (8) Gold. Apply 3 (4) Lien. Draw 2 cards.
 /// </summary>
 public sealed class Payday() : UsurerCard(1, CardType.Skill, CardRarity.Common, TargetType.AnyEnemy)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
+        new GoldVar(5),
         new DynamicVar("Lien", 3m),
         new CardsVar(2)
     ];
@@ -24,6 +25,8 @@ public sealed class Payday() : UsurerCard(1, CardType.Skill, CardRarity.Common, 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
         ArgumentNullException.ThrowIfNull(play.Target);
+
+        await PlayerCmd.GainGold(DynamicVars.Gold.IntValue, Owner);
 
         await DebtEngine.ApplyLien(
             choiceContext,
@@ -36,6 +39,7 @@ public sealed class Payday() : UsurerCard(1, CardType.Skill, CardRarity.Common, 
 
     protected override void OnUpgrade()
     {
+        DynamicVars.Gold.UpgradeValueBy(3m);
         DynamicVars["Lien"].UpgradeValueBy(1m);
     }
 }

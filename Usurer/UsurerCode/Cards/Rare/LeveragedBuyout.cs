@@ -13,10 +13,12 @@ namespace Usurer.UsurerCode.Cards;
 
 /// <summary>
 /// Leveraged Buyout — Rare Attack, cost 2, AnyEnemy.
-/// Deal 14 (18) damage. Deal 2 (3) additional unpowered damage for each Debt you have.
+/// Deal 14 (18) damage. Deal 2 (3) additional unpowered damage for each Debt you have, plus 1 per 15 Gold you have.
 /// </summary>
 public sealed class LeveragedBuyout() : UsurerCard(2, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy)
 {
+    private const int GoldPerBonusDamage = 15;
+
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
         new DamageVar(14m, ValueProp.Move),
@@ -30,7 +32,8 @@ public sealed class LeveragedBuyout() : UsurerCard(2, CardType.Attack, CardRarit
         await CommonActions.CardAttack(this, play).Execute(choiceContext);
 
         int debt = DebtEngine.GetDebtAmount(Owner.Creature);
-        int bonusDamage = debt * DynamicVars["DamagePerDebt"].IntValue;
+        int goldBonus = DebtEngine.GetGoldAmount(Owner.Creature) / GoldPerBonusDamage;
+        int bonusDamage = (debt * DynamicVars["DamagePerDebt"].IntValue) + goldBonus;
         if (bonusDamage > 0 && play.Target.IsAlive)
         {
             await CreatureCmd.Damage(

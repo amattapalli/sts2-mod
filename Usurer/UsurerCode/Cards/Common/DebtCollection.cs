@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BaseLib.Utils;
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
@@ -12,7 +13,7 @@ namespace Usurer.UsurerCode.Cards;
 
 /// <summary>
 /// Debt Collection — Common Attack, cost 1.
-/// Deal 8 (11) damage. Repay 4 (6) Debt.
+/// Deal 8 (11) damage. Seize 4 (6) from the enemy to forgive Debt (or gain excess as Gold).
 /// </summary>
 public sealed class DebtCollection() : UsurerCard(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
 {
@@ -27,7 +28,13 @@ public sealed class DebtCollection() : UsurerCard(1, CardType.Attack, CardRarity
         ArgumentNullException.ThrowIfNull(play.Target);
 
         await CommonActions.CardAttack(this, play).Execute(choiceContext);
-        await DebtEngine.RepayDebt(choiceContext, Owner.Creature, DynamicVars["Repay"].IntValue);
+        int amount = DynamicVars["Repay"].IntValue;
+        int repaid = await DebtEngine.RepayDebt(choiceContext, Owner.Creature, amount, spendPlayerGold: false);
+        int leftoverGold = amount - repaid;
+        if (leftoverGold > 0)
+        {
+            await PlayerCmd.GainGold(leftoverGold, Owner);
+        }
     }
 
     protected override void OnUpgrade()

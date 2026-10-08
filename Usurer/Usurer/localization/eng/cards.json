@@ -12,7 +12,7 @@
   "USURER-AUDIT.description": "Gain {Block:diff()} [gold]Block[/gold].\n[gold]Repay[/gold] {Repay:diff()} [gold]Debt[/gold] and gain [blue]1[/blue] additional [gold]Block[/gold] for each [gold]Debt[/gold] repaid.",
 
   "USURER-COIN_TOSS.title": "Coin Toss",
-  "USURER-COIN_TOSS.description": "Deal {Damage:diff()} damage.\nApply {Lien:diff()} [gold]Lien[/gold].\n[gold]Borrow[/gold] {Borrow:diff()} [gold]Debt[/gold].",
+  "USURER-COIN_TOSS.description": "Spend {Borrow:diff()} [gold]Gold[/gold] (or [gold]Borrow[/gold] shortfall as [gold]Debt[/gold]).\nDeal {Damage:diff()} damage.\nApply {Lien:diff()} [gold]Lien[/gold].",
 
   "USURER-EASY_CREDIT.title": "Easy Credit",
   "USURER-EASY_CREDIT.description": "Gain {Energy:energyIcons()}.\nDraw {Cards:diff()} card{Cards:plural:|s}.\n[gold]Borrow[/gold] {Borrow:diff()} [gold]Debt[/gold].",
@@ -21,19 +21,19 @@
   "USURER-BAILIFF_STRIKE.description": "Deal {Damage:diff()} damage twice.\nApply {Lien:diff()} [gold]Lien[/gold] on each hit.",
 
   "USURER-LEDGER_SLAM.title": "Ledger Slam",
-  "USURER-LEDGER_SLAM.description": "Deal {Damage:diff()} damage.\nIf you are [gold]Over-Leveraged[/gold], deal {BonusDamage:diff()} additional damage.",
+  "USURER-LEDGER_SLAM.description": "Deal {Damage:diff()} damage, plus [blue]1[/blue] damage per [blue]25[/blue] [gold]Gold[/gold] you have.\nIf you are [gold]Over-Leveraged[/gold], deal {BonusDamage:diff()} additional damage.",
 
   "USURER-COLLATERAL_SHIELD.title": "Collateral Shield",
   "USURER-COLLATERAL_SHIELD.description": "Gain {Block:diff()} [gold]Block[/gold], plus additional [gold]Block[/gold] equal to the target's [gold]Lien[/gold].\nApply {Lien:diff()} [gold]Lien[/gold].",
 
   "USURER-DEBT_COLLECTION.title": "Debt Collection",
-  "USURER-DEBT_COLLECTION.description": "Deal {Damage:diff()} damage.\n[gold]Repay[/gold] {Repay:diff()} [gold]Debt[/gold].",
+  "USURER-DEBT_COLLECTION.description": "Deal {Damage:diff()} damage.\nSeize {Repay:diff()} from the enemy to forgive [gold]Debt[/gold] (or gain excess as [gold]Gold[/gold]).",
 
   "USURER-COOK_THE_BOOKS.title": "Cook the Books",
   "USURER-COOK_THE_BOOKS.description": "Gain {Block:diff()} [gold]Block[/gold].\nApply {Moratorium:diff()} [gold]Moratorium[/gold].",
 
   "USURER-PAYDAY.title": "Payday",
-  "USURER-PAYDAY.description": "Apply {Lien:diff()} [gold]Lien[/gold].\nDraw {Cards:diff()} cards.",
+  "USURER-PAYDAY.description": "Gain {Gold:diff()} [gold]Gold[/gold].\nApply {Lien:diff()} [gold]Lien[/gold].\nDraw {Cards:diff()} cards.",
 
   "USURER-AMORTIZE.title": "Amortize",
   "USURER-AMORTIZE.description": "[gold]Repay[/gold] {Repay:diff()} [gold]Debt[/gold].\nGain {Block:diff()} [gold]Block[/gold].\nDraw {Cards:diff()} card.",
@@ -42,10 +42,10 @@
   "USURER-TAX_SWEEP.description": "Deal {Damage:diff()} damage to ALL enemies.\nApply {Lien:diff()} [gold]Lien[/gold] to ALL enemies.",
 
   "USURER-FORECLOSE.title": "Foreclose",
-  "USURER-FORECLOSE.description": "Deal {Damage:diff()} damage.\n[gold]Foreclose[/gold]: Consume all [gold]Lien[/gold] on the enemy to deal {DamagePerLien:diff()} damage and [gold]Repay[/gold] [blue]1[/blue] [gold]Debt[/gold] per stack.",
+  "USURER-FORECLOSE.description": "Deal {Damage:diff()} damage.\n[gold]Foreclose[/gold]: Consume all [gold]Lien[/gold] on the enemy to deal {DamagePerLien:diff()} damage and force the enemy to [gold]Repay[/gold] [blue]1[/blue] [gold]Debt[/gold] per stack.",
 
   "USURER-DEBT_RESTRUCTURING.title": "Debt Restructuring",
-  "USURER-DEBT_RESTRUCTURING.description": "[gold]Repay[/gold] {Repay:diff()} [gold]Debt[/gold].\nApply {Moratorium:diff()} [gold]Moratorium[/gold].",
+  "USURER-DEBT_RESTRUCTURING.description": "Forgive {Repay:diff()} [gold]Debt[/gold] without spending [gold]Gold[/gold].\nApply {Moratorium:diff()} [gold]Moratorium[/gold].",
 
   "USURER-DOUBLE_ENTRY.title": "Double Entry",
   "USURER-DOUBLE_ENTRY.description": "{IfUpgraded:show:Triple|Double} the target's [gold]Lien[/gold].\n[gold]Borrow[/gold] {Borrow:diff()} [gold]Debt[/gold].",
@@ -69,7 +69,7 @@
   "USURER-DEBTORS_PRISON.description": "At the start of your turn, apply {Weak:diff()} [gold]Weak[/gold] to ALL enemies that have [gold]Lien[/gold].",
 
   "USURER-LEVERAGED_BUYOUT.title": "Leveraged Buyout",
-  "USURER-LEVERAGED_BUYOUT.description": "Deal {Damage:diff()} damage, plus {DamagePerDebt:diff()} additional damage for each [gold]Debt[/gold] you have.",
+  "USURER-LEVERAGED_BUYOUT.description": "Deal {Damage:diff()} damage, plus {DamagePerDebt:diff()} damage per [gold]Debt[/gold] and [blue]1[/blue] damage per [blue]15[/blue] [gold]Gold[/gold] you have.",
 
   "USURER-SOVEREIGN_DEFAULT.title": "Sovereign Default",
   "USURER-SOVEREIGN_DEFAULT.description": "Prevent turn-end [gold]Debt[/gold] Installment self-damage.\nWhenever you are [gold]Over-Leveraged[/gold] at the end of your turn, deal [blue]ceil(Debt / 2)[/blue] damage to ALL enemies.",

@@ -25,6 +25,7 @@ public class Usurer : PlaceholderCharacterModel
     public override Color NameColor => Color;
     public override CharacterGender Gender => CharacterGender.Neutral;
     public override int StartingHp => 75;
+    public override int StartingGold => 150;
 
     public override IEnumerable<CardModel> StartingDeck =>
     [

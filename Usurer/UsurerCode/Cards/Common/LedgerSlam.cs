@@ -13,10 +13,12 @@ namespace Usurer.UsurerCode.Cards;
 
 /// <summary>
 /// Ledger Slam — Common Attack, cost 1.
-/// Deal 7 (10) damage. If you are Over-Leveraged (10+ Debt), deal 6 (8) additional damage.
+/// Deal 7 (10) damage, plus 1 damage per 25 Gold you have. If you are Over-Leveraged (10+ Debt), deal 6 (8) additional damage.
 /// </summary>
 public sealed class LedgerSlam() : UsurerCard(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
 {
+    private const int GoldPerBonusDamage = 25;
+
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
         new DamageVar(7m, ValueProp.Move),
@@ -28,6 +30,18 @@ public sealed class LedgerSlam() : UsurerCard(1, CardType.Attack, CardRarity.Com
         ArgumentNullException.ThrowIfNull(play.Target);
 
         await CommonActions.CardAttack(this, play).Execute(choiceContext);
+
+        int goldBonus = DebtEngine.GetGoldAmount(Owner.Creature) / GoldPerBonusDamage;
+        if (goldBonus > 0 && play.Target.IsAlive)
+        {
+            await CreatureCmd.Damage(
+                choiceContext,
+                play.Target,
+                goldBonus,
+                ValueProp.Unpowered,
+                Owner.Creature,
+                this);
+        }
 
         if (play.Target.IsAlive && DebtEngine.IsOverLeveraged(Owner.Creature))
         {

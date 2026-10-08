@@ -6,15 +6,19 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Relics;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Rooms;
+using MegaCrit.Sts2.Core.Runs;
 using Usurer.UsurerCode.Character;
 using Usurer.UsurerCode.Powers;
+using Usurer.UsurerCode.Util;
 
 namespace Usurer.UsurerCode.Relics;
 
 /// <summary>
 /// Infernal Ledger — Starter Relic for The Usurer.
-/// At the start of combat, gain 5 Debt. The first time each combat you reach 10+ Debt
+/// At the start of combat, Borrow 5 Debt (+5 Gold). The first time each combat you reach 10+ Debt
 /// (Over-Leveraged) or reduce your Debt to 0, gain 1 Energy and draw 1 card.
+/// At the end of combat, any unpaid Debt is settled from your Gold.
 /// </summary>
 [Pool(typeof(UsurerRelicPool))]
 public sealed class InfernalLedger : UsurerRelic
@@ -34,8 +38,14 @@ public sealed class InfernalLedger : UsurerRelic
             return;
 
         _triggeredThisCombat = false;
+        DebtEngine.ResetCombatLedger();
         Flash();
-        await PowerCmd.Apply<DebtPower>(choiceContext, Owner.Creature, InitialDebtStacks, Owner.Creature, null);
+        await DebtEngine.BorrowDebt(choiceContext, Owner.Creature, InitialDebtStacks);
+    }
+
+    public override async Task AfterCombatEnd(IRunState runState, CombatState? combatState, CombatRoom room)
+    {
+        await DebtEngine.SettleCombatEndDebt(Owner);
     }
 
     public async Task OnThresholdOrSettledReached(PlayerChoiceContext choiceContext)

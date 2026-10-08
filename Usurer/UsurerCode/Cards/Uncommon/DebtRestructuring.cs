@@ -21,7 +21,7 @@ public sealed class DebtRestructuring() : UsurerCard(1, CardType.Skill, CardRari
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
-        await DebtEngine.RepayDebt(choiceContext, Owner.Creature, DynamicVars["Repay"].IntValue);
+        await DebtEngine.RepayDebt(choiceContext, Owner.Creature, DynamicVars["Repay"].IntValue, spendPlayerGold: false);
         await DebtEngine.ApplyMoratorium(choiceContext, Owner.Creature, DynamicVars["Moratorium"].IntValue);
     }
 

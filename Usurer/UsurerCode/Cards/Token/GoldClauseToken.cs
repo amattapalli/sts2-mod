@@ -31,7 +31,7 @@ public sealed class GoldClauseToken() : UsurerCard(0, CardType.Skill, CardRarity
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay play)
     {
-        await DebtEngine.RepayDebt(choiceContext, Owner.Creature, DynamicVars["Repay"].IntValue);
+        await DebtEngine.RepayDebt(choiceContext, Owner.Creature, DynamicVars["Repay"].IntValue, spendPlayerGold: false);
         await CommonActions.CardBlock(this, play);
         await PlayerCmd.GainGold(DynamicVars.Gold.IntValue, Owner);
     }

@@ -1,21 +1,21 @@
 {
   "USURER-DEBT.title": "Debt",
-  "USURER-DEBT.description": "Financial leverage on the player. At the end of your turn, increases by [blue]+20%[/blue] Interest (rounded up), then if you are [gold]Over-Leveraged[/gold] ([blue]10+[/blue] [gold]Debt[/gold]), you take [blue]Debt / 5[/blue] unpowered Installment damage.",
+  "USURER-DEBT.description": "Financial leverage tied to your real [gold]Gold[/gold]. At the end of your turn, increases by [blue]+20%[/blue] Interest (rounded up), then if you are [gold]Over-Leveraged[/gold] ([blue]10+[/blue] [gold]Debt[/gold]), you lose [blue]Debt / 5[/blue] [gold]Gold[/gold] and HP. Unpaid [gold]Debt[/gold] is settled from your [gold]Gold[/gold] after combat.",
 
   "USURER-BORROW.title": "Borrow",
-  "USURER-BORROW.description": "Gain the specified amount of [gold]Debt[/gold] to fuel undercosted cards and trigger [gold]Over-Leveraged[/gold] effects.",
+  "USURER-BORROW.description": "Immediately gain real [gold]Gold[/gold] and an equal amount of [gold]Debt[/gold] to fuel undercosted cards and [gold]Over-Leveraged[/gold] effects.",
 
   "USURER-REPAY.title": "Repay",
-  "USURER-REPAY.description": "Remove up to the specified amount of [gold]Debt[/gold]. Many cards grant bonus [gold]Block[/gold] or rewards based on the exact [gold]Debt[/gold] repaid.",
+  "USURER-REPAY.description": "Spend your [gold]Gold[/gold] (or force enemies via [gold]Lien[/gold] and [gold]Foreclose[/gold]) to remove [gold]Debt[/gold]. When enemies pay off your [gold]Debt[/gold], you keep the borrowed [gold]Gold[/gold] as profit!",
 
   "USURER-OVER_LEVERAGED.title": "Over-Leveraged",
-  "USURER-OVER_LEVERAGED.description": "Active while you have [blue]10[/blue] or more [gold]Debt[/gold]. Empowers high-leverage cards and relics, but triggers turn-end Installment payments unless paused by [gold]Moratorium[/gold].",
+  "USURER-OVER_LEVERAGED.description": "Active while you have [blue]10[/blue] or more [gold]Debt[/gold]. Empowers high-leverage cards and relics, but triggers turn-end [gold]Gold[/gold] & HP Installment payments unless paused by [gold]Moratorium[/gold].",
 
   "USURER-LIEN.title": "Lien",
-  "USURER-LIEN.description": "Collateral debuff on an enemy. Whenever hit by an Attack, the enemy takes damage equal to its [gold]Lien[/gold] and you [gold]Repay[/gold] [blue]1[/blue] [gold]Debt[/gold].",
+  "USURER-LIEN.description": "Collateral debuff on an enemy. Whenever hit by an Attack, the enemy takes damage equal to its [gold]Lien[/gold] and pays off [blue]1[/blue] of your [gold]Debt[/gold] (or grants [blue]1[/blue] [gold]Gold[/gold] if you have [blue]0[/blue] [gold]Debt[/gold]).",
 
   "USURER-FORECLOSE.title": "Foreclose",
-  "USURER-FORECLOSE.description": "Consume all [gold]Lien[/gold] stacks on an enemy to deal massive burst damage per stack and [gold]Repay[/gold] [blue]1[/blue] [gold]Debt[/gold] per stack.",
+  "USURER-FORECLOSE.description": "Consume all [gold]Lien[/gold] stacks on an enemy to deal burst damage per stack and force the enemy to pay off [blue]1[/blue] [gold]Debt[/gold] per stack (letting you keep the borrowed [gold]Gold[/gold]).",
 
   "USURER-MORATORIUM.title": "Moratorium",
   "USURER-MORATORIUM.description": "Pauses turn-end [gold]Debt[/gold] Interest (+20%) and Installment damage for [blue]1[/blue] turn per stack."

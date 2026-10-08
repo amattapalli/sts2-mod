@@ -46,7 +46,8 @@ public sealed class AbacusOfGreed : UsurerRelic
         }
 
         Flash();
-        await DebtEngine.RepayDebt(choiceContext, Owner.Creature, RepayOnKillAmount);
+        await DebtEngine.RepayDebt(choiceContext, Owner.Creature, RepayOnKillAmount, spendPlayerGold: false);
+        await PlayerCmd.GainGold(RepayOnKillAmount, Owner);
 
         var combatState = target.CombatState ?? Owner.Creature.CombatState;
         if (combatState == null)

@@ -12,7 +12,7 @@ namespace Usurer.UsurerCode.Cards;
 
 /// <summary>
 /// Coin Toss — Common Attack, cost 0.
-/// Deal 4 (6) damage. Apply 2 (3) Lien. Borrow 2 Debt.
+/// Spend 2 Gold (or Borrow shortfall as Debt). Deal 4 (6) damage. Apply 2 (3) Lien.
 /// </summary>
 public sealed class CoinToss() : UsurerCard(0, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
 {
@@ -27,6 +27,7 @@ public sealed class CoinToss() : UsurerCard(0, CardType.Attack, CardRarity.Commo
     {
         ArgumentNullException.ThrowIfNull(play.Target);
 
+        await DebtEngine.SpendGoldOrBorrow(choiceContext, Owner.Creature, DynamicVars["Borrow"].IntValue);
         await CommonActions.CardAttack(this, play).Execute(choiceContext);
 
         if (play.Target.IsAlive)
@@ -37,8 +38,6 @@ public sealed class CoinToss() : UsurerCard(0, CardType.Attack, CardRarity.Commo
                 Owner.Creature,
                 DynamicVars["Lien"].IntValue);
         }
-
-        await DebtEngine.BorrowDebt(choiceContext, Owner.Creature, DynamicVars["Borrow"].IntValue);
     }
 
     protected override void OnUpgrade()

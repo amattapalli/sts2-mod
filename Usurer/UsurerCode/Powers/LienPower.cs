@@ -46,7 +46,11 @@ public sealed class LienPower : UsurerPower
 
         if (dealer is { IsAlive: true })
         {
-            await DebtEngine.RepayDebt(choiceContext, dealer, 1);
+            int repaid = await DebtEngine.RepayDebt(choiceContext, dealer, 1, spendPlayerGold: false);
+            if (repaid == 0 && dealer.Player is { } player)
+            {
+                await PlayerCmd.GainGold(1, player);
+            }
         }
     }
 }

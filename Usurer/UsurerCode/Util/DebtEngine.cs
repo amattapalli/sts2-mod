@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Entities.Gold;
+using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.ValueProps;
 using Usurer.UsurerCode.Powers;
@@ -13,18 +15,42 @@ namespace Usurer.UsurerCode.Util;
 
 /// <summary>
 /// Core financial combat state machine for The Usurer.
-/// Manages Borrowing and Repaying Debt, Over-Leveraged threshold checks (10+ Debt),
-/// Lien application and Foreclosure, Moratorium pauses, and turn-end Interest/Installments.
+/// Connects real in-game <see cref="Player.Gold"/> directly with <see cref="DebtPower"/>:
+/// - Borrowing Debt immediately credits real Gold to the player's pouch.
+/// - Standard Repayment spends real Gold to pay down Debt.
+/// - Enemy-paid / forgiven Debt (via Liens, Foreclosure, Debt Collection, Debt Restructuring)
+///   pays down Debt without spending the player's Gold, letting the player keep the borrowed Gold as profit.
+/// - Unpaid Debt at the end of combat is settled from the player's Gold pouch.
 /// </summary>
 public static class DebtEngine
 {
     public const int OverLeveragedThreshold = 10;
+    public const int MaxNetLoanProfitPerCombat = 30;
+
+    private static int _netCombatLoanedGold;
+
+    /// <summary>
+    /// Tracks net Gold loaned via <see cref="BorrowDebt"/> minus Gold spent via <see cref="RepayDebt"/>
+    /// during the current combat encounter.
+    /// </summary>
+    public static int NetCombatLoanedGold => _netCombatLoanedGold;
+
+    /// <summary>
+    /// Resets the per-combat loan ledger at the start of each encounter.
+    /// </summary>
+    public static void ResetCombatLedger() => _netCombatLoanedGold = 0;
 
     /// <summary>
     /// Returns the current stacks of <see cref="DebtPower"/> on <paramref name="creature"/>.
     /// </summary>
     public static int GetDebtAmount(Creature? creature) =>
         creature?.GetPower<DebtPower>()?.Amount ?? 0;
+
+    /// <summary>
+    /// Returns the real in-game <see cref="Player.Gold"/> held by <paramref name="creature"/>'s owner.
+    /// </summary>
+    public static int GetGoldAmount(Creature? creature) =>
+        creature?.Player?.Gold ?? 0;
 
     /// <summary>
     /// Returns true if <paramref name="creature"/> has at least <see cref="OverLeveragedThreshold"/> (10) Debt.
@@ -45,7 +71,8 @@ public static class DebtEngine
         creature?.GetPower<MoratoriumPower>()?.Amount ?? 0;
 
     /// <summary>
-    /// Applies <paramref name="amount"/> stacks of <see cref="DebtPower"/> to <paramref name="borrower"/>,
+    /// Loans <paramref name="amount"/> real <see cref="Player.Gold"/> to <paramref name="borrower"/>,
+    /// applies <paramref name="amount"/> stacks of <see cref="DebtPower"/>,
     /// triggers <see cref="GoldenScalesPower"/> if active, and checks <see cref="InfernalLedger"/>.
     /// </summary>
     public static async Task BorrowDebt(
@@ -55,6 +82,12 @@ public static class DebtEngine
     {
         if (amount <= 0 || borrower is not { IsAlive: true })
             return;
+
+        if (borrower.Player is { } player)
+        {
+            await PlayerCmd.GainGold(amount, player);
+            _netCombatLoanedGold += amount;
+        }
 
         await PowerCmd.Apply<DebtPower>(ctx, borrower, amount, borrower, null);
 
@@ -84,14 +117,50 @@ public static class DebtEngine
     }
 
     /// <summary>
-    /// Removes up to <paramref name="amount"/> stacks of <see cref="DebtPower"/> from <paramref name="borrower"/>,
-    /// triggers <see cref="ShadowBankingPower"/> if any Debt was repaid, and checks <see cref="InfernalLedger"/>
-    /// if Debt reached 0. Returns the exact amount of Debt repaid.
+    /// Spends up to <paramref name="goldCost"/> real <see cref="Player.Gold"/> from <paramref name="borrower"/>;
+    /// if the player has less than <paramref name="goldCost"/> Gold, borrows the shortfall as <see cref="DebtPower"/>.
+    /// </summary>
+    public static async Task SpendGoldOrBorrow(
+        PlayerChoiceContext ctx,
+        Creature? borrower,
+        int goldCost)
+    {
+        if (goldCost <= 0 || borrower is not { IsAlive: true })
+            return;
+
+        int spentFromPouch = 0;
+        if (borrower.Player is { Gold: > 0 } player)
+        {
+            spentFromPouch = Math.Min(player.Gold, goldCost);
+            if (spentFromPouch > 0)
+            {
+                await PlayerCmd.LoseGold(spentFromPouch, player, GoldLossType.Spent);
+            }
+        }
+
+        int shortfall = goldCost - spentFromPouch;
+        if (shortfall > 0)
+        {
+            await PowerCmd.Apply<DebtPower>(ctx, borrower, shortfall, borrower, null);
+            if (IsOverLeveraged(borrower) && borrower.Player?.GetRelic<InfernalLedger>() is { } ledger)
+            {
+                await ledger.OnThresholdOrSettledReached(ctx);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Removes up to <paramref name="amount"/> stacks of <see cref="DebtPower"/> from <paramref name="borrower"/>.
+    /// When <paramref name="spendPlayerGold"/> is true (default), spends up to the repaid amount from
+    /// <paramref name="borrower"/>'s real <see cref="Player.Gold"/>. When false (enemy-paid or forgiven Debt),
+    /// reduces Debt without costing the player's Gold.
+    /// Triggers <see cref="ShadowBankingPower"/> and checks <see cref="InfernalLedger"/> if Debt reaches 0.
     /// </summary>
     public static async Task<int> RepayDebt(
         PlayerChoiceContext ctx,
         Creature? borrower,
-        int amount)
+        int amount,
+        bool spendPlayerGold = true)
     {
         if (amount <= 0 || borrower is not { IsAlive: true })
             return 0;
@@ -104,6 +173,16 @@ public static class DebtEngine
         int actualRepaid = Math.Min(currentDebt, amount);
         if (actualRepaid <= 0)
             return 0;
+
+        if (spendPlayerGold && borrower.Player is { Gold: > 0 } player)
+        {
+            int goldToSpend = Math.Min(player.Gold, actualRepaid);
+            if (goldToSpend > 0)
+            {
+                await PlayerCmd.LoseGold(goldToSpend, player, GoldLossType.Spent);
+                _netCombatLoanedGold = Math.Max(0, _netCombatLoanedGold - goldToSpend);
+            }
+        }
 
         if (actualRepaid >= currentDebt)
         {
@@ -126,6 +205,31 @@ public static class DebtEngine
         }
 
         return actualRepaid;
+    }
+
+    /// <summary>
+    /// Settles unpaid <see cref="DebtPower"/> from <paramref name="player"/>'s real <see cref="Player.Gold"/>
+    /// at the end of combat, capping net unbacked loan profit per combat at <see cref="MaxNetLoanProfitPerCombat"/>.
+    /// </summary>
+    public static async Task SettleCombatEndDebt(Player? player)
+    {
+        if (player == null)
+            return;
+
+        int remainingDebt = GetDebtAmount(player.Creature);
+        int excessLoanProfit = Math.Max(0, _netCombatLoanedGold - remainingDebt - MaxNetLoanProfitPerCombat);
+        int totalSettlement = remainingDebt + excessLoanProfit;
+
+        if (totalSettlement > 0 && player.Gold > 0)
+        {
+            int goldDeducted = Math.Min(player.Gold, totalSettlement);
+            if (goldDeducted > 0)
+            {
+                await PlayerCmd.LoseGold(goldDeducted, player, GoldLossType.Spent);
+            }
+        }
+
+        _netCombatLoanedGold = 0;
     }
 
     /// <summary>
@@ -190,8 +294,8 @@ public static class DebtEngine
 
     /// <summary>
     /// Consumes all <see cref="LienPower"/> on <paramref name="target"/>, dealing
-    /// <paramref name="damagePerLien"/> unpowered damage per stack and repaying
-    /// <paramref name="repayPerLien"/> Debt per stack on <paramref name="applier"/>.
+    /// <paramref name="damagePerLien"/> unpowered damage per stack and forcing the enemy to repay
+    /// <paramref name="repayPerLien"/> Debt per stack on <paramref name="applier"/> (without costing player Gold).
     /// </summary>
     public static async Task<int> ForecloseLien(
         PlayerChoiceContext ctx,
@@ -225,15 +329,15 @@ public static class DebtEngine
         int totalRepay = consumed * repayPerLien;
         if (totalRepay > 0 && applier is { IsAlive: true })
         {
-            await RepayDebt(ctx, applier, totalRepay);
+            await RepayDebt(ctx, applier, totalRepay, spendPlayerGold: false);
         }
 
         return consumed;
     }
 
     /// <summary>
-    /// Resolves turn-end Debt Interest (+20% rounded up) and Installment damage (Debt / 5 if Debt &gt;= 10,
-    /// or redirected to all enemies if <see cref="SovereignDefaultPower"/> is active),
+    /// Resolves turn-end Debt Interest (+20% rounded up) and Installment penalty (Debt / 5 Gold lost + HP damage
+    /// if Debt &gt;= 10, or redirected to all enemies if <see cref="SovereignDefaultPower"/> is active),
     /// unless paused by <see cref="MoratoriumPower"/>.
     /// </summary>
     public static async Task ResolveTurnEndDebt(
@@ -305,6 +409,15 @@ public static class DebtEngine
         int installmentDamage = totalDebt / 5;
         if (installmentDamage > 0)
         {
+            if (borrower.Player is { Gold: > 0 } player)
+            {
+                int garnishedGold = Math.Min(player.Gold, installmentDamage);
+                if (garnishedGold > 0)
+                {
+                    await PlayerCmd.LoseGold(garnishedGold, player, GoldLossType.Lost);
+                }
+            }
+
             await CreatureCmd.Damage(
                 ctx,
                 borrower,
