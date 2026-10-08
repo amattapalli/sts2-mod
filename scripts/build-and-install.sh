@@ -5,6 +5,9 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 PROJECT_FILE="$REPO_ROOT/Transmuter/Transmuter.csproj"
 
+# Allow .NET 9 tools (like StS2PckPacker) to roll forward to .NET 10+
+export DOTNET_ROLL_FORWARD="${DOTNET_ROLL_FORWARD:-Major}"
+
 LAUNCH=false
 for arg in "$@"; do
     case "$arg" in
