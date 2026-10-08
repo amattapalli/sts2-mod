@@ -1,0 +1,15 @@
+{
+  "USURER-INFERNAL_LEDGER.title": "Infernal Ledger",
+  "USURER-INFERNAL_LEDGER.description": "At the start of combat, [gold]Borrow[/gold] [blue]5[/blue] [gold]Debt[/gold]. The first time each combat you become [gold]Over-Leveraged[/gold] ([blue]10+[/blue] [gold]Debt[/gold]) or reduce your [gold]Debt[/gold] to [blue]0[/blue], gain {energyPrefix:energyIcons(1)} and draw [blue]1[/blue] card.",
+  "USURER-INFERNAL_LEDGER.flavor": "Its pages burn with names that have been dead for centuries, yet the interest still compounds.",
+
+  "USURER-ABACUS_OF_GREED.title": "Abacus of Greed",
+  "USURER-ABACUS_OF_GREED.description": "Whenever an enemy dies while it has [gold]Lien[/gold], transfer its [gold]Lien[/gold] to a random living enemy and [gold]Repay[/gold] [blue]3[/blue] [gold]Debt[/gold].",
+  "USURER-ABACUS_OF_GREED.flavor": "Every bead is carved from a debtor's knucklebone.",
+
+  "USURER-BLOOD_SIGNET.title": "Blood Signet",
+  "USURER-BLOOD_SIGNET.description": "At the start of your turn, if you are [gold]Over-Leveraged[/gold] ([blue]10+[/blue] [gold]Debt[/gold]), gain [blue]3[/blue] [gold]Block[/gold] and apply [blue]2[/blue] [gold]Lien[/gold] to ALL enemies.",
+  "USURER-BLOOD_SIGNET.flavor": "Pressed into hot crimson wax, it binds flesh and fortune alike.",
+
+  "SEA_GLASS.USURER-USURER.title": "Gilded Bullion Glass"
+}

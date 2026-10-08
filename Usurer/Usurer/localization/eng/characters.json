@@ -1,0 +1,16 @@
+{
+  "USURER-USURER.title": "The Usurer",
+  "USURER-USURER.titleObject": "The Usurer",
+  "USURER-USURER.description": "An infernal syndicate banker who weaponizes compound interest.\n[gold]Borrows[/gold] [gold]Debt[/gold] for explosive tempo, binds enemies in [gold]Liens[/gold], and [gold]Forecloses[/gold] on their collateral.",
+  "USURER-USURER.pronounObject": "them",
+  "USURER-USURER.possessiveAdjective": "their",
+  "USURER-USURER.pronounPossessive": "theirs",
+  "USURER-USURER.pronounSubject": "they",
+  "USURER-USURER.goldMonologue": "Gold is merely a promise written in someone else's blood.",
+  "USURER-USURER.eventDeathPrevention": "My ledger is not yet balanced.",
+  "USURER-USURER.aromaPrinciple": "Every soul has a price; the profit lies in the interest.",
+  "USURER-USURER.cardsModifierTitle": "Usurer Cards",
+  "USURER-USURER.cardsModifierDescription": "Usurer cards will now appear in rewards and shops.",
+  "USURER-USURER.banter.alive.endTurnPing": "Interest is accruing...",
+  "USURER-USURER.banter.dead.endTurnPing": "...write it off as a loss..."
+}

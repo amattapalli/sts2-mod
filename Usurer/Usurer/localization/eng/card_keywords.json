@@ -1,0 +1,22 @@
+{
+  "USURER-DEBT.title": "Debt",
+  "USURER-DEBT.description": "Financial leverage on the player. At the end of your turn, increases by [blue]+20%[/blue] Interest (rounded up), then if you are [gold]Over-Leveraged[/gold] ([blue]10+[/blue] [gold]Debt[/gold]), you take [blue]Debt / 5[/blue] unpowered Installment damage.",
+
+  "USURER-BORROW.title": "Borrow",
+  "USURER-BORROW.description": "Gain the specified amount of [gold]Debt[/gold] to fuel undercosted cards and trigger [gold]Over-Leveraged[/gold] effects.",
+
+  "USURER-REPAY.title": "Repay",
+  "USURER-REPAY.description": "Remove up to the specified amount of [gold]Debt[/gold]. Many cards grant bonus [gold]Block[/gold] or rewards based on the exact [gold]Debt[/gold] repaid.",
+
+  "USURER-OVER_LEVERAGED.title": "Over-Leveraged",
+  "USURER-OVER_LEVERAGED.description": "Active while you have [blue]10[/blue] or more [gold]Debt[/gold]. Empowers high-leverage cards and relics, but triggers turn-end Installment payments unless paused by [gold]Moratorium[/gold].",
+
+  "USURER-LIEN.title": "Lien",
+  "USURER-LIEN.description": "Collateral debuff on an enemy. Whenever hit by an Attack, the enemy takes damage equal to its [gold]Lien[/gold] and you [gold]Repay[/gold] [blue]1[/blue] [gold]Debt[/gold].",
+
+  "USURER-FORECLOSE.title": "Foreclose",
+  "USURER-FORECLOSE.description": "Consume all [gold]Lien[/gold] stacks on an enemy to deal massive burst damage per stack and [gold]Repay[/gold] [blue]1[/blue] [gold]Debt[/gold] per stack.",
+
+  "USURER-MORATORIUM.title": "Moratorium",
+  "USURER-MORATORIUM.description": "Pauses turn-end [gold]Debt[/gold] Interest (+20%) and Installment damage for [blue]1[/blue] turn per stack."
+}

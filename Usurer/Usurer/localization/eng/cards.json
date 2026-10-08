@@ -1,0 +1,95 @@
+{
+  "USURER-STRIKE_USURER.title": "Strike",
+  "USURER-STRIKE_USURER.description": "Deal {Damage:diff()} damage.",
+
+  "USURER-DEFEND_USURER.title": "Defend",
+  "USURER-DEFEND_USURER.description": "Gain {Block:diff()} [gold]Block[/gold].",
+
+  "USURER-PREDATORY_LOAN.title": "Predatory Loan",
+  "USURER-PREDATORY_LOAN.description": "Deal {Damage:diff()} damage.\nApply {Lien:diff()} [gold]Lien[/gold].\n[gold]Borrow[/gold] {Borrow:diff()} [gold]Debt[/gold].",
+
+  "USURER-AUDIT.title": "Audit",
+  "USURER-AUDIT.description": "Gain {Block:diff()} [gold]Block[/gold].\n[gold]Repay[/gold] {Repay:diff()} [gold]Debt[/gold] and gain [blue]1[/blue] additional [gold]Block[/gold] for each [gold]Debt[/gold] repaid.",
+
+  "USURER-COIN_TOSS.title": "Coin Toss",
+  "USURER-COIN_TOSS.description": "Deal {Damage:diff()} damage.\nApply {Lien:diff()} [gold]Lien[/gold].\n[gold]Borrow[/gold] {Borrow:diff()} [gold]Debt[/gold].",
+
+  "USURER-EASY_CREDIT.title": "Easy Credit",
+  "USURER-EASY_CREDIT.description": "Gain {Energy:energyIcons()}.\nDraw {Cards:diff()} card{Cards:plural:|s}.\n[gold]Borrow[/gold] {Borrow:diff()} [gold]Debt[/gold].",
+
+  "USURER-BAILIFF_STRIKE.title": "Bailiff Strike",
+  "USURER-BAILIFF_STRIKE.description": "Deal {Damage:diff()} damage twice.\nApply {Lien:diff()} [gold]Lien[/gold] on each hit.",
+
+  "USURER-LEDGER_SLAM.title": "Ledger Slam",
+  "USURER-LEDGER_SLAM.description": "Deal {Damage:diff()} damage.\nIf you are [gold]Over-Leveraged[/gold], deal {BonusDamage:diff()} additional damage.",
+
+  "USURER-COLLATERAL_SHIELD.title": "Collateral Shield",
+  "USURER-COLLATERAL_SHIELD.description": "Gain {Block:diff()} [gold]Block[/gold], plus additional [gold]Block[/gold] equal to the target's [gold]Lien[/gold].\nApply {Lien:diff()} [gold]Lien[/gold].",
+
+  "USURER-DEBT_COLLECTION.title": "Debt Collection",
+  "USURER-DEBT_COLLECTION.description": "Deal {Damage:diff()} damage.\n[gold]Repay[/gold] {Repay:diff()} [gold]Debt[/gold].",
+
+  "USURER-COOK_THE_BOOKS.title": "Cook the Books",
+  "USURER-COOK_THE_BOOKS.description": "Gain {Block:diff()} [gold]Block[/gold].\nApply {Moratorium:diff()} [gold]Moratorium[/gold].",
+
+  "USURER-PAYDAY.title": "Payday",
+  "USURER-PAYDAY.description": "Apply {Lien:diff()} [gold]Lien[/gold].\nDraw {Cards:diff()} cards.",
+
+  "USURER-AMORTIZE.title": "Amortize",
+  "USURER-AMORTIZE.description": "[gold]Repay[/gold] {Repay:diff()} [gold]Debt[/gold].\nGain {Block:diff()} [gold]Block[/gold].\nDraw {Cards:diff()} card.",
+
+  "USURER-TAX_SWEEP.title": "Tax Sweep",
+  "USURER-TAX_SWEEP.description": "Deal {Damage:diff()} damage to ALL enemies.\nApply {Lien:diff()} [gold]Lien[/gold] to ALL enemies.",
+
+  "USURER-FORECLOSE.title": "Foreclose",
+  "USURER-FORECLOSE.description": "Deal {Damage:diff()} damage.\n[gold]Foreclose[/gold]: Consume all [gold]Lien[/gold] on the enemy to deal {DamagePerLien:diff()} damage and [gold]Repay[/gold] [blue]1[/blue] [gold]Debt[/gold] per stack.",
+
+  "USURER-DEBT_RESTRUCTURING.title": "Debt Restructuring",
+  "USURER-DEBT_RESTRUCTURING.description": "[gold]Repay[/gold] {Repay:diff()} [gold]Debt[/gold].\nApply {Moratorium:diff()} [gold]Moratorium[/gold].",
+
+  "USURER-DOUBLE_ENTRY.title": "Double Entry",
+  "USURER-DOUBLE_ENTRY.description": "{IfUpgraded:show:Triple|Double} the target's [gold]Lien[/gold].\n[gold]Borrow[/gold] {Borrow:diff()} [gold]Debt[/gold].",
+
+  "USURER-BAILOUT.title": "Bailout",
+  "USURER-BAILOUT.description": "[gold]Repay[/gold] ALL of your [gold]Debt[/gold].\nGain {BlockPerDebt:diff()} [gold]Block[/gold] for each [gold]Debt[/gold] repaid.",
+
+  "USURER-HOSTILE_TAKEOVER.title": "Hostile Takeover",
+  "USURER-HOSTILE_TAKEOVER.description": "Destroy the target's [gold]Block[/gold].\nDeal {Damage:diff()} damage.\nApply {Lien:diff()} [gold]Lien[/gold] and [gold]Borrow[/gold] {Borrow:diff()} [gold]Debt[/gold].",
+
+  "USURER-COMPOUND_INTEREST.title": "Compound Interest",
+  "USURER-COMPOUND_INTEREST.description": "At the start of your turn, if you have any [gold]Debt[/gold], apply {Lien:diff()} [gold]Lien[/gold] to ALL enemies.",
+
+  "USURER-SHADOW_BANKING.title": "Shadow Banking",
+  "USURER-SHADOW_BANKING.description": "Whenever you [gold]Repay[/gold] any [gold]Debt[/gold], gain {BonusBlock:diff()} [gold]Block[/gold].",
+
+  "USURER-GARNISH_WAGES.title": "Garnish Wages",
+  "USURER-GARNISH_WAGES.description": "Gain {Block:diff()} [gold]Block[/gold].\nWhenever you apply [gold]Lien[/gold] this turn, gain {LienBlock:diff()} [gold]Block[/gold].",
+
+  "USURER-DEBTORS_PRISON.title": "Debtor's Prison",
+  "USURER-DEBTORS_PRISON.description": "At the start of your turn, apply {Weak:diff()} [gold]Weak[/gold] to ALL enemies that have [gold]Lien[/gold].",
+
+  "USURER-LEVERAGED_BUYOUT.title": "Leveraged Buyout",
+  "USURER-LEVERAGED_BUYOUT.description": "Deal {Damage:diff()} damage, plus {DamagePerDebt:diff()} additional damage for each [gold]Debt[/gold] you have.",
+
+  "USURER-SOVEREIGN_DEFAULT.title": "Sovereign Default",
+  "USURER-SOVEREIGN_DEFAULT.description": "Prevent turn-end [gold]Debt[/gold] Installment self-damage.\nWhenever you are [gold]Over-Leveraged[/gold] at the end of your turn, deal [blue]ceil(Debt / 2)[/blue] damage to ALL enemies.",
+
+  "USURER-SYNDICATED_LOAN.title": "Syndicated Loan",
+  "USURER-SYNDICATED_LOAN.description": "Deal {Damage:diff()} damage to ALL enemies.\nRemove all [gold]Artifact[/gold] and [gold]Block[/gold] from ALL enemies, then apply {Lien:diff()} [gold]Lien[/gold] to ALL enemies.\n[gold]Borrow[/gold] {Borrow:diff()} [gold]Debt[/gold].",
+
+  "USURER-INFERNAL_CONTRACT.title": "Infernal Contract",
+  "USURER-INFERNAL_CONTRACT.description": "Choose 1 of 3 generated 0-cost cards to add to your [gold]Hand[/gold]: [gold]Blood Clause[/gold], [gold]Gold Clause[/gold], or [gold]Soul Clause[/gold].",
+  "USURER-INFERNAL_CONTRACT.selectionScreenPrompt": "Choose a contract clause to add to your Hand.",
+
+  "USURER-GOLDEN_SCALES.title": "Golden Scales",
+  "USURER-GOLDEN_SCALES.description": "Whenever you [gold]Borrow[/gold] [gold]Debt[/gold], apply {Lien:diff()} [gold]Lien[/gold] to a random enemy.",
+
+  "USURER-BLOOD_CLAUSE_TOKEN.title": "Blood Clause",
+  "USURER-BLOOD_CLAUSE_TOKEN.description": "Gain {Energy:energyIcons()}.\nDraw {Cards:diff()} cards.\n[gold]Borrow[/gold] {Borrow:diff()} [gold]Debt[/gold].",
+
+  "USURER-GOLD_CLAUSE_TOKEN.title": "Gold Clause",
+  "USURER-GOLD_CLAUSE_TOKEN.description": "[gold]Repay[/gold] {Repay:diff()} [gold]Debt[/gold].\nGain {Block:diff()} [gold]Block[/gold] and {Gold:diff()} [gold]Gold[/gold].",
+
+  "USURER-SOUL_CLAUSE_TOKEN.title": "Soul Clause",
+  "USURER-SOUL_CLAUSE_TOKEN.description": "Apply {Lien:diff()} [gold]Lien[/gold] and {Vulnerable:diff()} [gold]Vulnerable[/gold]."
+}
