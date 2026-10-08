@@ -1,4 +1,4 @@
-﻿using BaseLib.Abstracts;
+using BaseLib.Abstracts;
 using BaseLib.Extensions;
 using Transmuter.TransmuterCode.Extensions;
 using MegaCrit.Sts2.Core.Entities.Powers;
@@ -28,4 +28,13 @@ public abstract class TransmuterPower : CustomPowerModel
     /// Single, but you're suggested to use Single as it is more explicit about how it will work.
     /// </summary>
     public abstract override PowerStackType StackType { get; }
+
+    /// <summary>
+    /// Exposes the protected <see cref="MegaCrit.Sts2.Core.Models.Powers.PowerModel.Flash"/> method publicly
+    /// so external systems (like <see cref="Util.ReactionEngine"/>) can trigger the visual power flash effect.
+    /// </summary>
+    public new void Flash()
+    {
+        base.Flash();
+    }
 }
