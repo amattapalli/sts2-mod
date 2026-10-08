@@ -1,7 +1,10 @@
+using System.Collections.Generic;
 using BaseLib.Abstracts;
 using BaseLib.Extensions;
 using Transmuter.TransmuterCode.Extensions;
+using Transmuter.TransmuterCode.Util;
 using MegaCrit.Sts2.Core.Entities.Powers;
+using MegaCrit.Sts2.Core.HoverTips;
 
 namespace Transmuter.TransmuterCode.Powers;
 
@@ -28,6 +31,9 @@ public abstract class TransmuterPower : CustomPowerModel
     /// Single, but you're suggested to use Single as it is more explicit about how it will work.
     /// </summary>
     public abstract override PowerStackType StackType { get; }
+
+    protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+        TransmuterHoverTips.ForPower(Id.Entry, GetType());
 
     /// <summary>
     /// Exposes the protected <see cref="MegaCrit.Sts2.Core.Models.Powers.PowerModel.Flash"/> method publicly

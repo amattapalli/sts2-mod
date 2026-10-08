@@ -51,7 +51,7 @@
   "TRANSMUTER-QUICKSILVER_NEEDLE.description": "Deal {Damage:diff()} damage twice.\nApply {Mercury:diff()} [gold]Mercury[/gold] on each hit.",
 
   "TRANSMUTER-LEAD_TO_GOLD.title": "Lead to Gold",
-  "TRANSMUTER-LEAD_TO_GOLD.description": "Trigger a [gold]Reaction[/gold] on an enemy with 2+ stacks of a single [gold]Reagent[/gold] as if 1 [gold]Salt[/gold] was applied. If triggered, gain {Gold:diff()} [gold]Gold[/gold].\nExhaust.",
+  "TRANSMUTER-LEAD_TO_GOLD.description": "Trigger a [gold]Reaction[/gold] on an enemy with 2+ stacks of a single [gold]Reagent[/gold] as if 1 [gold]Salt[/gold] was applied. If triggered, gain {Gold:diff()} [gold]Gold[/gold].",
 
   "TRANSMUTER-VOLATILE_FLASK.title": "Volatile Flask",
   "TRANSMUTER-VOLATILE_FLASK.description": "Deal {Damage:diff()} damage to ALL enemies.\nApply {Mercury:diff()} [gold]Mercury[/gold] to ALL enemies.",

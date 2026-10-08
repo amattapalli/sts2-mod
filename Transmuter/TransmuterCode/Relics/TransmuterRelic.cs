@@ -1,8 +1,11 @@
-﻿using BaseLib.Abstracts;
+using System.Collections.Generic;
+using BaseLib.Abstracts;
 using BaseLib.Extensions;
 using BaseLib.Utils;
+using MegaCrit.Sts2.Core.HoverTips;
 using Transmuter.TransmuterCode.Character;
 using Transmuter.TransmuterCode.Extensions;
+using Transmuter.TransmuterCode.Util;
 
 namespace Transmuter.TransmuterCode.Relics;
 
@@ -21,4 +24,7 @@ public abstract class TransmuterRelic : CustomRelicModel
     public override string PackedIconPath => $"{Id.Entry.RemovePrefix().ToLowerInvariant()}.png".RelicImagePath();
     protected override string PackedIconOutlinePath => $"{Id.Entry.RemovePrefix().ToLowerInvariant()}_outline.png".RelicImagePath();
     protected override string BigIconPath => $"{Id.Entry.RemovePrefix().ToLowerInvariant()}.png".BigRelicImagePath();
+
+    protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+        TransmuterHoverTips.ForRelic(Id.Entry);
 }

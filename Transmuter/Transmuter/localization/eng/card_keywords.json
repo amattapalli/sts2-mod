@@ -20,6 +20,12 @@
   "TRANSMUTER-DISSOLVE.title": "Dissolve",
   "TRANSMUTER-DISSOLVE.description": "[gold]Salt[/gold] + [gold]Mercury[/gold] Reaction (X = total stacks consumed): Destroy the target's [gold]Block[/gold], apply [blue]ceil(X/2)[/blue] [gold]Vulnerable[/gold], and draw [blue]1[/blue] card ([blue]2[/blue] if X >= 6).",
 
+  "TRANSMUTER-REAGENT.title": "Reagent",
+  "TRANSMUTER-REAGENT.description": "Alchemical debuffs applied to enemies: [gold]Salt[/gold], [gold]Sulfur[/gold], and [gold]Mercury[/gold]. When 2+ different Reagents are on an enemy, all stacks are consumed to trigger a [gold]Reaction[/gold].",
+
+  "TRANSMUTER-REACTION.title": "Reaction",
+  "TRANSMUTER-REACTION.description": "Triggered when 2+ different [gold]Reagents[/gold] are on an enemy (X = total stacks consumed):\n[gold]Detonate[/gold] (Sulfur + Mercury): [blue]3X[/blue] damage + [blue]2X[/blue] to others.\n[gold]Calcify[/gold] (Salt + Sulfur): [blue]2X[/blue] [gold]Block[/gold] + [blue]ceil(X/3)[/blue] [gold]Weak[/gold].\n[gold]Dissolve[/gold] (Salt + Mercury): Strip [gold]Block[/gold], [blue]ceil(X/2)[/blue] [gold]Vulnerable[/gold], draw [blue]1[/blue] ([blue]2[/blue] if X >= 6).",
+
   "TRANSMUTER-MAGNUM_OPUS.title": "Magnum Opus",
   "TRANSMUTER-MAGNUM_OPUS.description": "[gold]Salt[/gold] + [gold]Sulfur[/gold] + [gold]Mercury[/gold] Reaction (X = total stacks consumed): Trigger [gold]Detonate[/gold], [gold]Calcify[/gold], and [gold]Dissolve[/gold] all at once at full potency X."
 }

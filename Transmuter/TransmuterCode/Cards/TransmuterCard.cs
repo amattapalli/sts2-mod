@@ -1,9 +1,12 @@
-﻿using BaseLib.Abstracts;
+using System.Collections.Generic;
+using BaseLib.Abstracts;
 using BaseLib.Extensions;
 using BaseLib.Utils;
 using Transmuter.TransmuterCode.Character;
 using Transmuter.TransmuterCode.Extensions;
+using Transmuter.TransmuterCode.Util;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.HoverTips;
 
 namespace Transmuter.TransmuterCode.Cards;
 
@@ -29,4 +32,7 @@ public abstract class TransmuterCard(int cost, CardType type, CardRarity rarity,
     //Uses card_portraits/card_name.png as image path. These should be smaller images.
     public override string PortraitPath => $"{Id.Entry.RemovePrefix().ToLowerInvariant()}.png".CardImagePath();
     public override string BetaPortraitPath => $"beta/{Id.Entry.RemovePrefix().ToLowerInvariant()}.png".CardImagePath();
+
+    protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+        TransmuterHoverTips.ForCard(Id.Entry);
 }

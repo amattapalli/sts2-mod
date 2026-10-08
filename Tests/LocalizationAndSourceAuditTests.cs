@@ -209,6 +209,27 @@ public class LocalizationAndSourceAuditTests
     }
 
     [Fact]
+    public void StaticHoverTipsAndBaseModels_AreCompleteAndWired()
+    {
+        var hoverTips = ParseJsonDisallowDuplicates(Path.Combine(LocDir, "static_hover_tips.json"));
+        string[] expectedTipKeys =
+        [
+            "SULFUR", "MERCURY", "SALT", "STABILIZE",
+            "REAGENT", "REACTION", "DETONATE", "CALCIFY", "DISSOLVE", "MAGNUM_OPUS"
+        ];
+
+        foreach (string tip in expectedTipKeys)
+        {
+            Assert.True(hoverTips.ContainsKey($"TRANSMUTER-{tip}.title"), $"Missing TRANSMUTER-{tip}.title in static_hover_tips.json");
+            Assert.True(hoverTips.ContainsKey($"TRANSMUTER-{tip}.description"), $"Missing TRANSMUTER-{tip}.description in static_hover_tips.json");
+        }
+
+        Assert.Contains("ExtraHoverTips", File.ReadAllText(Path.Combine(CodeDir, "Cards", "TransmuterCard.cs")));
+        Assert.Contains("ExtraHoverTips", File.ReadAllText(Path.Combine(CodeDir, "Relics", "TransmuterRelic.cs")));
+        Assert.Contains("ExtraHoverTips", File.ReadAllText(Path.Combine(CodeDir, "Powers", "TransmuterPower.cs")));
+    }
+
+    [Fact]
     public void EveryConcreteCSharpCardPowerAndRelic_HasMatchingLocalizationAndDynamicVars()
     {
         var cardsLoc = ParseJsonDisallowDuplicates(Path.Combine(LocDir, "cards.json"));
