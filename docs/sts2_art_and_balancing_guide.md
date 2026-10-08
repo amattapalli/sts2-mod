@@ -127,3 +127,11 @@ When you pull and launch the mod on your PC, keep a quick mental note (or jot do
 3. **Stabilize Window:** Is `1 turn` of **Stabilize** (from *Hermetic Seal*) enough time to set up all 3 Reagents for **Magnum Opus**, or should *Hermetic Seal+* grant `2 turns` (or Retain)?
 4. **Standout vs. Skipped Cards:** Which card rewards made you immediately click them, and which ones did you always skip?
 5. **Energy & Card Draw Economy:** Did you frequently run out of cards in hand with leftover Energy, or run out of Energy with a full hand?
+
+---
+
+### 6. Balance Consideration: Mercury Damage Interaction (Secondary Proc vs. Flat Attack Modifier)
+
+- **Current Behavior:** Mercury acts as a **secondary follow-up damage proc** via `AfterDamageReceived` (`Amount` unpowered damage per powered Attack). The card itself displays its base damage (`6`), followed by a separate damage tick on the enemy.
+- **Alternative Considered (Flat Attack Modifier):** Modifying incoming attack damage directly (displaying a dynamic green `6 -> 6 + n` forecast when hovering over the target).
+- **Decision:** **Keep as secondary proc for now.** Flat damage amplification risks scaling multi-hit attacks (*Quicksilver Needle*) and high-frequency attacks too aggressively (acting like target-based Strength), making Mercury disproportionately powerful compared to Salt and Sulfur. Keeping it as a separate follow-up trigger keeps the baseline power budget in check while preserving its alchemical identity.
