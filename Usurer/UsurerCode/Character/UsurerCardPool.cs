@@ -19,6 +19,7 @@ public class UsurerCardPool : CustomCardPoolModel
     public override float V => 0.90f;
 
     public override Color DeckEntryCardColor => Usurer.Color;
+    public override Color EnergyOutlineColor => new("4a1216");
 
     public override bool IsColorless => false;
 }

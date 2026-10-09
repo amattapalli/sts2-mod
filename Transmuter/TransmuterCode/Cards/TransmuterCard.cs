@@ -9,6 +9,7 @@ using Transmuter.TransmuterCode.Util;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Models;
 
 namespace Transmuter.TransmuterCode.Cards;
 
@@ -22,6 +23,8 @@ namespace Transmuter.TransmuterCode.Cards;
 public abstract class TransmuterCard(int cost, CardType type, CardRarity rarity, TargetType target) :
     CustomCardModel(cost, type, rarity, target)
 {
+    public override CardPoolModel VisualCardPool => ModelDb.CardPool<TransmuterCardPool>();
+
     //Image size:
     //Normal art: 1000x760 (Using 500x380 should also work, it will simply be scaled.)
     //Full art: 606x852

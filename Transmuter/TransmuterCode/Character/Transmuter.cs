@@ -19,6 +19,7 @@ public class Transmuter : PlaceholderCharacterModel
 
     public override string PlaceholderID => "silent";
     public override Color NameColor => Color;
+    public override Color EnergyLabelOutlineColor => new("4a2606");
     public override CharacterGender Gender => CharacterGender.Neutral;
     public override int StartingHp => 74;
 
@@ -49,7 +50,12 @@ public class Transmuter : PlaceholderCharacterModel
 
     protected override IEnumerable<string> ExtraAssetPaths =>
     [
-        "char_select_bg_transmuter.png".CharacterUiPath()
+        "char_select_bg_transmuter.png".CharacterUiPath(),
+        "big_energy.png".CharacterUiPath(),
+        "text_energy.png".CharacterUiPath(),
+        "energy_orb_base.png".CharacterUiPath(),
+        "energy_orb_rot.png".CharacterUiPath(),
+        "energy_orb_core.png".CharacterUiPath()
     ];
 
     public override NCreatureVisuals? CreateCustomVisuals()

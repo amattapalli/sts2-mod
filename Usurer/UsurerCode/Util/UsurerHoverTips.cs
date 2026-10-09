@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
+using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Usurer.UsurerCode.Cards;
+using Usurer.UsurerCode.Character;
 using Usurer.UsurerCode.Powers;
 
 namespace Usurer.UsurerCode.Util;
@@ -52,6 +55,12 @@ public static class UsurerHoverTips
         string raw = LocString.GetIfExists(locTable, $"{entryKey}.description")?.GetRawText() ?? string.Empty;
         if (string.IsNullOrEmpty(raw))
             yield break;
+
+        if (raw.Contains(":energyIcons(", StringComparison.Ordinal))
+        {
+            string prefix = EnergyIconHelper.GetPrefix(ModelDb.CardPool<UsurerCardPool>());
+            yield return HoverTipFactory.ForEnergyWithPrefix(prefix);
+        }
 
         bool hasBorrow = ContainsKeyword(raw, "Borrow") || ContainsKeyword(raw, "Borrows");
         bool hasRepay = ContainsKeyword(raw, "Repay") || ContainsKeyword(raw, "Repays") || ContainsKeyword(raw, "Repaid");

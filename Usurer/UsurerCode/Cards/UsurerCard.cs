@@ -6,6 +6,7 @@ using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Models;
 using Usurer.UsurerCode.Character;
 using Usurer.UsurerCode.Extensions;
 using Usurer.UsurerCode.Util;
@@ -19,6 +20,8 @@ namespace Usurer.UsurerCode.Cards;
 public abstract class UsurerCard(int cost, CardType type, CardRarity rarity, TargetType target) :
     CustomCardModel(cost, type, rarity, target)
 {
+    public override CardPoolModel VisualCardPool => ModelDb.CardPool<UsurerCardPool>();
+
     public override string CustomPortraitPath => $"{Id.Entry.RemovePrefix().ToLowerInvariant()}.png".BigCardImagePath();
     public override string PortraitPath => $"{Id.Entry.RemovePrefix().ToLowerInvariant()}.png".CardImagePath();
     public override string BetaPortraitPath => $"beta/{Id.Entry.RemovePrefix().ToLowerInvariant()}.png".CardImagePath();

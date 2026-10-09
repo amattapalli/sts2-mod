@@ -29,6 +29,7 @@ public class TransmuterCardPool : CustomCardPoolModel
 
     //Color of small card icons
     public override Color DeckEntryCardColor => Transmuter.Color;
+    public override Color EnergyOutlineColor => new("4a2606");
     
     public override bool IsColorless => false;
 }

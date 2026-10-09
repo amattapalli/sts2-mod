@@ -1,6 +1,11 @@
 using System;
+using System.Linq;
+using System.Reflection;
 using Godot;
 using HarmonyLib;
+using MegaCrit.Sts2.Core.Assets;
+using MegaCrit.Sts2.Core.Entities.Players;
+using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Combat;
 using MegaCrit.Sts2.Core.Nodes.Screens.CharacterSelect;
@@ -10,13 +15,148 @@ namespace Transmuter.TransmuterCode.Character;
 
 /// <summary>
 /// Provides programmatic combat animations (<c>Idle</c>, <c>Attack</c>, <c>Cast</c>, <c>Hit</c>, <c>Dead</c>, <c>Revive</c>)
-/// for The Transmuter's <see cref="NCreatureVisuals"/> and patches the character selection screen
-/// so selecting The Transmuter displays the custom Transmuter laboratory background instead of The Silent.
+/// for The Transmuter's <see cref="NCreatureVisuals"/>, patches the character selection screen
+/// so selecting The Transmuter displays the custom Transmuter laboratory background instead of The Silent,
+/// and replaces The Silent's energy counter / energy icon across all combat and UI surfaces.
 /// </summary>
 [HarmonyPatch]
 public static class TransmuterVisualsAndUiPatch
 {
     private const string CombatAnimLibraryName = "";
+    private static readonly FieldInfo? EnergyCounterPlayerField =
+        AccessTools.Field(typeof(NEnergyCounter), "_player");
+    private static readonly MethodInfo? EnergyCounterRefreshLabelMethod =
+        AccessTools.Method(typeof(NEnergyCounter), "RefreshLabel");
+
+    /// <summary>
+    /// Ensures every model belonging to The Transmuter (cards including Token cards, relics, powers, and potions)
+    /// always resolves its energy icon pool to <see cref="TransmuterCardPool"/> even outside of an active run
+    /// or when a token card is in <c>TokenCardPool</c>.
+    /// </summary>
+    [HarmonyPatch(typeof(EnergyIconHelper), nameof(EnergyIconHelper.GetPool))]
+    [HarmonyPostfix]
+    public static void EnsureTransmuterEnergyPool(AbstractModel model, ref CardPoolModel __result)
+    {
+        if (model != null && model.GetType().Assembly == typeof(Transmuter).Assembly)
+        {
+            EnsureEnergyAssetsCached();
+            __result = ModelDb.CardPool<TransmuterCardPool>();
+        }
+    }
+
+    /// <summary>
+    /// Replaces The Silent's green skull energy counter orb in the combat HUD with The Transmuter's
+    /// custom 3-layer alchemical Philosopher's Stone / brass alembic energy counter orb.
+    /// </summary>
+    [HarmonyPatch(typeof(NEnergyCounter), nameof(NEnergyCounter._Ready))]
+    [HarmonyPostfix]
+    public static void ApplyCustomCombatEnergyCounter(NEnergyCounter __instance)
+    {
+        if (EnergyCounterPlayerField?.GetValue(__instance) is not Player player ||
+            player.Character is not Transmuter)
+        {
+            return;
+        }
+
+        EnsureEnergyAssetsCached();
+
+        var layers = __instance.GetNodeOrNull<Control>("%Layers");
+        var rotationLayers = __instance.GetNodeOrNull<Control>("%RotationLayers");
+        if (layers == null || rotationLayers == null)
+            return;
+
+        string basePath = "energy_orb_base.png".CharacterUiPath();
+        string rotPath = "energy_orb_rot.png".CharacterUiPath();
+        string corePath = "energy_orb_core.png".CharacterUiPath();
+
+        if (!ResourceLoader.Exists(basePath) || !ResourceLoader.Exists(rotPath) || !ResourceLoader.Exists(corePath))
+            return;
+
+        var baseTex = ResourceLoader.Load<Texture2D>(basePath);
+        var rotTex = ResourceLoader.Load<Texture2D>(rotPath);
+        var coreTex = ResourceLoader.Load<Texture2D>(corePath);
+        if (baseTex == null || rotTex == null || coreTex == null)
+            return;
+
+        foreach (Node child in layers.GetChildren().ToList())
+        {
+            if (child == rotationLayers)
+                continue;
+            layers.RemoveChild(child);
+            child.QueueFree();
+        }
+
+        foreach (Node child in rotationLayers.GetChildren().ToList())
+        {
+            rotationLayers.RemoveChild(child);
+            child.QueueFree();
+        }
+
+        if (rotationLayers.GetParent() != layers)
+        {
+            rotationLayers.GetParent()?.RemoveChild(rotationLayers);
+            layers.AddChild(rotationLayers);
+        }
+
+        rotationLayers.Position = Vector2.Zero;
+        rotationLayers.Size = new Vector2(128f, 128f);
+        rotationLayers.MouseFilter = Control.MouseFilterEnum.Ignore;
+
+        var baseRect = CreateOrbLayerRect("TransmuterOrbBase", baseTex);
+        layers.AddChild(baseRect);
+        layers.MoveChild(baseRect, 0);
+
+        var rotRect = CreateOrbLayerRect("TransmuterOrbRot", rotTex);
+        rotRect.PivotOffset = new Vector2(64f, 64f);
+        rotationLayers.AddChild(rotRect);
+
+        var coreRect = CreateOrbLayerRect("TransmuterOrbCore", coreTex);
+        layers.AddChild(coreRect);
+
+        Color amberBurst = new(1.0f, 0.78f, 0.22f, 1.0f);
+        if (__instance.GetNodeOrNull<CpuParticles2D>("%BurstBack") is { } burstBack)
+        {
+            burstBack.SelfModulate = amberBurst;
+        }
+        if (__instance.GetNodeOrNull<CpuParticles2D>("%BurstFront") is { } burstFront)
+        {
+            burstFront.SelfModulate = amberBurst;
+        }
+
+        EnergyCounterRefreshLabelMethod?.Invoke(__instance, null);
+    }
+
+    private static TextureRect CreateOrbLayerRect(string name, Texture2D texture)
+    {
+        var rect = new TextureRect
+        {
+            Name = name,
+            Texture = texture,
+            Position = Vector2.Zero,
+            Size = new Vector2(128f, 128f),
+            ExpandMode = TextureRect.ExpandModeEnum.IgnoreSize,
+            StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered,
+            MouseFilter = Control.MouseFilterEnum.Ignore
+        };
+        rect.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.FullRect);
+        return rect;
+    }
+
+    private static void EnsureEnergyAssetsCached()
+    {
+        foreach (string file in new[] { "big_energy.png", "text_energy.png", "energy_orb_base.png", "energy_orb_rot.png", "energy_orb_core.png" })
+        {
+            string path = file.CharacterUiPath();
+            if (!PreloadManager.Cache.ContainsKey(path) && ResourceLoader.Exists(path))
+            {
+                var tex = ResourceLoader.Load<Texture2D>(path);
+                if (tex != null)
+                {
+                    PreloadManager.Cache.SetAsset(path, tex);
+                }
+            }
+        }
+    }
 
     /// <summary>
     /// Attaches a Godot <see cref="AnimationPlayer"/> with full combat animations to The Transmuter's
