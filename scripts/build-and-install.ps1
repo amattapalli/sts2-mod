@@ -1,5 +1,5 @@
 param(
-    [ValidateSet("all", "both", "transmuter", "usurer", IgnoreCase = $true)]
+    [ValidateSet("all", "both", "transmuter", "usurer", "multiplayertrade", "trade", IgnoreCase = $true)]
     [string]$Character = "all",
     [string]$GodotPath = "",
     [switch]$Launch
@@ -27,11 +27,14 @@ function Build-Sts2Mod {
 }
 
 switch ($Character.ToLowerInvariant()) {
-    "transmuter" { Build-Sts2Mod -ModName "Transmuter" }
-    "usurer"     { Build-Sts2Mod -ModName "Usurer" }
-    default      {
+    "transmuter"       { Build-Sts2Mod -ModName "Transmuter" }
+    "usurer"           { Build-Sts2Mod -ModName "Usurer" }
+    "multiplayertrade" { Build-Sts2Mod -ModName "MultiplayerTrade" }
+    "trade"            { Build-Sts2Mod -ModName "MultiplayerTrade" }
+    default            {
         Build-Sts2Mod -ModName "Transmuter"
         Build-Sts2Mod -ModName "Usurer"
+        Build-Sts2Mod -ModName "MultiplayerTrade"
     }
 }
 

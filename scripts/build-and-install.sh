@@ -18,7 +18,7 @@ while [[ $# -gt 0 ]]; do
             ;;
         --character|-c)
             if [[ $# -lt 2 ]]; then
-                echo "Error: --character requires a value (transmuter | usurer | all)" >&2
+                echo "Error: --character requires a value (transmuter | usurer | multiplayertrade | trade | all)" >&2
                 exit 1
             fi
             CHARACTER="$(echo "$2" | tr '[:upper:]' '[:lower:]')"
@@ -28,17 +28,17 @@ while [[ $# -gt 0 ]]; do
             CHARACTER="$(echo "${1#*=}" | tr '[:upper:]' '[:lower:]')"
             shift
             ;;
-        transmuter|usurer|all)
+        transmuter|usurer|multiplayertrade|trade|all)
             CHARACTER="$(echo "$1" | tr '[:upper:]' '[:lower:]')"
             shift
             ;;
         --help|-h)
-            echo "Usage: ./scripts/build-and-install.sh [--character transmuter|usurer|all] [--launch]"
+            echo "Usage: ./scripts/build-and-install.sh [--character transmuter|usurer|multiplayertrade|all] [--launch]"
             exit 0
             ;;
         *)
             echo "Unknown option: $1" >&2
-            echo "Usage: ./scripts/build-and-install.sh [--character transmuter|usurer|all] [--launch]" >&2
+            echo "Usage: ./scripts/build-and-install.sh [--character transmuter|usurer|multiplayertrade|all] [--launch]" >&2
             exit 1
             ;;
     esac
@@ -64,18 +64,22 @@ case "$CHARACTER" in
     usurer)
         build_mod "Usurer"
         ;;
+    multiplayertrade|trade)
+        build_mod "MultiplayerTrade"
+        ;;
     all|both)
         build_mod "Transmuter"
         build_mod "Usurer"
+        build_mod "MultiplayerTrade"
         ;;
     *)
-        echo "Error: Invalid character '$CHARACTER'. Expected: transmuter, usurer, or all." >&2
+        echo "Error: Invalid mod '$CHARACTER'. Expected: transmuter, usurer, multiplayertrade, or all." >&2
         exit 1
         ;;
 esac
 
 # Clean up duplicate local mods/BaseLib if Steam Workshop BaseLib (3737335127) is installed,
-# and ensure BaseLib + Transmuter + Usurer stay enabled in settings.save.
+# and ensure BaseLib + Transmuter + Usurer + MultiplayerTrade stay enabled in settings.save.
 if [[ "$OSTYPE" == "darwin"* ]]; then
     WORKSHOP_BASELIB="$HOME/Library/Application Support/Steam/steamapps/workshop/content/2868840/3737335127"
     LOCAL_BASELIB="$HOME/Library/Application Support/Steam/steamapps/common/Slay the Spire 2/SlayTheSpire2.app/Contents/MacOS/mods/BaseLib"
@@ -101,13 +105,19 @@ for path in settings_paths:
     old_list = mod_settings.get("mod_list") or []
 
     # Remove duplicate local BaseLib entries and ensure BaseLib (steam_workshop),
-    # Transmuter (mods_directory), and Usurer (mods_directory) are enabled.
+    # Transmuter (mods_directory), Usurer (mods_directory), and MultiplayerTrade (mods_directory) are enabled.
     new_list = [
         {"id": "BaseLib", "is_enabled": True, "source": "steam_workshop"},
         {"id": "Transmuter", "is_enabled": True, "source": "mods_directory"},
         {"id": "Usurer", "is_enabled": True, "source": "mods_directory"},
+        {"id": "MultiplayerTrade", "is_enabled": True, "source": "mods_directory"},
     ]
-    seen = {("BaseLib", "steam_workshop"), ("Transmuter", "mods_directory"), ("Usurer", "mods_directory")}
+    seen = {
+        ("BaseLib", "steam_workshop"),
+        ("Transmuter", "mods_directory"),
+        ("Usurer", "mods_directory"),
+        ("MultiplayerTrade", "mods_directory"),
+    }
     for item in old_list:
         mid = item.get("id")
         src = item.get("source")
@@ -121,7 +131,7 @@ for path in settings_paths:
     try:
         with open(path, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2, sort_keys=True)
-        print(f"==> Enabled BaseLib, Transmuter, and Usurer in {path}")
+        print(f"==> Enabled BaseLib, Transmuter, Usurer, and MultiplayerTrade in {path}")
     except Exception:
         pass
 PY

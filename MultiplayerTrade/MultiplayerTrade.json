@@ -1,0 +1,14 @@
+{
+  "id": "MultiplayerTrade",
+  "name": "Multiplayer Trade",
+  "author": "amattapalli",
+  "description": "Enables two-way card trading (up to 5 cards per side, including 5-for-0 gifting) between teammates at Shops and Rest Sites in vanilla co-op multiplayer, triggering card-acquisition relics.",
+  "version": "v0.1.0",
+  "min_game_version": "0.107.0",
+  "has_pck": true,
+  "has_dll": true,
+  "dependencies": [
+    {"id": "BaseLib", "min_version": "3.3.0"}
+  ],
+  "affects_gameplay": true
+}
