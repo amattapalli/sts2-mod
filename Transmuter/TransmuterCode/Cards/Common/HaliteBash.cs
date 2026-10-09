@@ -12,7 +12,7 @@ using Transmuter.TransmuterCode.Util;
 namespace Transmuter.TransmuterCode.Cards;
 
 /// <summary>
-/// Halite Bash — Common Attack, cost 1. Deal 6 (8) damage.
+/// Halite Bash — Common Attack, cost 1. Deal 5 (7) damage.
 /// Gain Block equal to target's Salt, then apply 3 (4) Salt.
 /// </summary>
 public sealed class HaliteBash() : TransmuterCard(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
@@ -21,7 +21,7 @@ public sealed class HaliteBash() : TransmuterCard(1, CardType.Attack, CardRarity
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new DamageVar(6m, ValueProp.Move),
+        new DamageVar(5m, ValueProp.Move),
         new DynamicVar("Salt", 3m)
     ];
 

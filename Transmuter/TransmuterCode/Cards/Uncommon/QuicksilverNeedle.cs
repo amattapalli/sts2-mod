@@ -12,13 +12,13 @@ namespace Transmuter.TransmuterCode.Cards;
 
 /// <summary>
 /// Quicksilver Needle — Uncommon Attack, cost 1.
-/// Deal 4 (6) damage twice. Apply 1 (2) Mercury after each hit.
+/// Deal 3 (5) damage twice. Apply 1 (2) Mercury after each hit.
 /// </summary>
 public sealed class QuicksilverNeedle() : TransmuterCard(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new DamageVar(4m, ValueProp.Move),
+        new DamageVar(3m, ValueProp.Move),
         new DynamicVar("Mercury", 1m)
     ];
 

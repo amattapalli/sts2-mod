@@ -15,14 +15,14 @@ namespace Transmuter.TransmuterCode.Cards;
 
 /// <summary>
 /// Universal Solvent — Rare Attack, cost 2, AllEnemies.
-/// Deal 12 (16) damage to ALL enemies, strip Block and ArtifactPower from all hittable enemies,
+/// Deal 9 (12) damage to ALL enemies, strip Block and ArtifactPower from all hittable enemies,
 /// then apply 3 (4) Salt and 3 (4) Mercury to each hittable enemy.
 /// </summary>
 public sealed class UniversalSolvent() : TransmuterCard(2, CardType.Attack, CardRarity.Rare, TargetType.AllEnemies)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new DamageVar(12m, ValueProp.Move),
+        new DamageVar(9m, ValueProp.Move),
         new DynamicVar("Salt", 3m),
         new DynamicVar("Mercury", 3m)
     ];
@@ -80,7 +80,7 @@ public sealed class UniversalSolvent() : TransmuterCard(2, CardType.Attack, Card
 
     protected override void OnUpgrade()
     {
-        DynamicVars.Damage.UpgradeValueBy(4m);
+        DynamicVars.Damage.UpgradeValueBy(3m);
         DynamicVars["Salt"].UpgradeValueBy(1m);
         DynamicVars["Mercury"].UpgradeValueBy(1m);
     }

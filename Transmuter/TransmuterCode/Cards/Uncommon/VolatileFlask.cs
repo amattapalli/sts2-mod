@@ -13,13 +13,13 @@ namespace Transmuter.TransmuterCode.Cards;
 
 /// <summary>
 /// Volatile Flask — Uncommon Attack, cost 2, AllEnemies.
-/// Deal 8 (11) damage to ALL enemies. Apply 2 (3) Mercury to ALL hittable enemies.
+/// Deal 6 (9) damage to ALL enemies. Apply 2 (3) Mercury to ALL hittable enemies.
 /// </summary>
 public sealed class VolatileFlask() : TransmuterCard(2, CardType.Attack, CardRarity.Uncommon, TargetType.AllEnemies)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new DamageVar(8m, ValueProp.Move),
+        new DamageVar(6m, ValueProp.Move),
         new DynamicVar("Mercury", 2m)
     ];
 

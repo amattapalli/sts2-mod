@@ -11,13 +11,13 @@ using Transmuter.TransmuterCode.Util;
 namespace Transmuter.TransmuterCode.Cards;
 
 /// <summary>
-/// Calcination — Common Attack, cost 1. Deal 8 (11) damage. Apply 3 (4) Sulfur.
+/// Calcination — Common Attack, cost 1. Deal 6 (8) damage. Apply 3 (4) Sulfur.
 /// </summary>
 public sealed class Calcination() : TransmuterCard(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new DamageVar(8m, ValueProp.Move),
+        new DamageVar(6m, ValueProp.Move),
         new DynamicVar("Sulfur", 3m)
     ];
 
@@ -36,7 +36,7 @@ public sealed class Calcination() : TransmuterCard(1, CardType.Attack, CardRarit
 
     protected override void OnUpgrade()
     {
-        DynamicVars.Damage.UpgradeValueBy(3m);
+        DynamicVars.Damage.UpgradeValueBy(2m);
         DynamicVars["Sulfur"].UpgradeValueBy(1m);
     }
 }

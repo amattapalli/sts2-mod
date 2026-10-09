@@ -11,7 +11,7 @@ using Transmuter.TransmuterCode.Util;
 namespace Transmuter.TransmuterCode.Cards;
 
 /// <summary>
-/// Saline Solution — Basic Skill, cost 1. Gain 5 (7) Block. Apply 2 (3) Salt to target.
+/// Saline Solution — Basic Skill, cost 1. Gain 4 (6) Block. Apply 2 (3) Salt to target.
 /// </summary>
 public sealed class SalineSolution() : TransmuterCard(1, CardType.Skill, CardRarity.Basic, TargetType.AnyEnemy)
 {
@@ -19,7 +19,7 @@ public sealed class SalineSolution() : TransmuterCard(1, CardType.Skill, CardRar
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new BlockVar(5m, ValueProp.Move),
+        new BlockVar(4m, ValueProp.Move),
         new DynamicVar("Salt", 2m)
     ];
 

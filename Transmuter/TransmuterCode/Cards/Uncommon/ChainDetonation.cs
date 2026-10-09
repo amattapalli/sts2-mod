@@ -14,13 +14,13 @@ namespace Transmuter.TransmuterCode.Cards;
 
 /// <summary>
 /// Chain Detonation — Uncommon Attack, cost 2.
-/// Deal 10 (14) damage. Apply 3 (4) Sulfur. Whenever Detonate triggers this turn, apply 2 (3) Sulfur to ALL other enemies.
+/// Deal 8 (11) damage. Apply 3 (4) Sulfur. Whenever Detonate triggers this turn, apply 2 (3) Sulfur to ALL other enemies.
 /// </summary>
 public sealed class ChainDetonation() : TransmuterCard(2, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new DamageVar(10m, ValueProp.Move),
+        new DamageVar(8m, ValueProp.Move),
         new DynamicVar("Sulfur", 3m),
         new PowerVar<ChainDetonationPower>("ChainSulfur", 2m)
     ];
@@ -50,7 +50,7 @@ public sealed class ChainDetonation() : TransmuterCard(2, CardType.Attack, CardR
 
     protected override void OnUpgrade()
     {
-        DynamicVars.Damage.UpgradeValueBy(4m);
+        DynamicVars.Damage.UpgradeValueBy(3m);
         DynamicVars["Sulfur"].UpgradeValueBy(1m);
         DynamicVars["ChainSulfur"].UpgradeValueBy(1m);
     }

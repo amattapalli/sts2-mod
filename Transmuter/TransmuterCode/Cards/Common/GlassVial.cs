@@ -11,13 +11,13 @@ using Transmuter.TransmuterCode.Util;
 namespace Transmuter.TransmuterCode.Cards;
 
 /// <summary>
-/// Glass Vial — Common Attack, cost 0. Deal 3 (5) damage. Apply 1 (2) Salt.
+/// Glass Vial — Common Attack, cost 0. Deal 2 (4) damage. Apply 1 (2) Salt.
 /// </summary>
 public sealed class GlassVial() : TransmuterCard(0, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
 {
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new DamageVar(3m, ValueProp.Move),
+        new DamageVar(2m, ValueProp.Move),
         new DynamicVar("Salt", 1m)
     ];
 

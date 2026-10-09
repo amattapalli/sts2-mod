@@ -1,6 +1,6 @@
 {
   "TRANSMUTER-CRACKED_ALEMBIC.title": "Cracked Alembic",
-  "TRANSMUTER-CRACKED_ALEMBIC.description": "At the start of combat, apply [blue]2[/blue] [gold]Mercury[/gold] to a random enemy. The first [gold]Reaction[/gold] you trigger each combat grants {energyPrefix:energyIcons(1)} and draws [blue]1[/blue] card.",
+  "TRANSMUTER-CRACKED_ALEMBIC.description": "At the start of combat, apply [blue]1[/blue] [gold]Mercury[/gold] to a random enemy. The first [gold]Reaction[/gold] you trigger each combat grants {energyPrefix:energyIcons(1)} and draws [blue]1[/blue] card.",
   "TRANSMUTER-CRACKED_ALEMBIC.flavor": "Even fractured glass remembers the heat of the first distillation.",
 
   "TRANSMUTER-OUROBOROS_RING.title": "Ouroboros Ring",

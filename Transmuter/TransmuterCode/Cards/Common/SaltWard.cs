@@ -11,7 +11,7 @@ using Transmuter.TransmuterCode.Util;
 namespace Transmuter.TransmuterCode.Cards;
 
 /// <summary>
-/// Salt Ward — Common Skill, cost 1. Gain 7 (10) Block. Apply 2 (3) Salt.
+/// Salt Ward — Common Skill, cost 1. Gain 6 (8) Block. Apply 2 (3) Salt.
 /// </summary>
 public sealed class SaltWard() : TransmuterCard(1, CardType.Skill, CardRarity.Common, TargetType.AnyEnemy)
 {
@@ -19,7 +19,7 @@ public sealed class SaltWard() : TransmuterCard(1, CardType.Skill, CardRarity.Co
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new BlockVar(7m, ValueProp.Move),
+        new BlockVar(6m, ValueProp.Move),
         new DynamicVar("Salt", 2m)
     ];
 
@@ -38,7 +38,7 @@ public sealed class SaltWard() : TransmuterCard(1, CardType.Skill, CardRarity.Co
 
     protected override void OnUpgrade()
     {
-        DynamicVars.Block.UpgradeValueBy(3m);
+        DynamicVars.Block.UpgradeValueBy(2m);
         DynamicVars["Salt"].UpgradeValueBy(1m);
     }
 }

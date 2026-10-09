@@ -14,13 +14,13 @@ namespace Transmuter.TransmuterCode.Relics;
 
 /// <summary>
 /// Cracked Alembic — Starter Relic for The Transmuter.
-/// At the start of combat, apply 2 Mercury to a random enemy.
+/// At the start of combat, apply 1 Mercury to a random enemy.
 /// The first Reaction you trigger each combat grants 1 Energy and draws 1 card.
 /// </summary>
 [Pool(typeof(TransmuterRelicPool))]
 public sealed class CrackedAlembic : TransmuterRelic
 {
-    private const int InitialMercuryStacks = 2;
+    private const int InitialMercuryStacks = 1;
     private bool _triggeredFirstReactionThisCombat;
 
     public override RelicRarity Rarity => RelicRarity.Starter;
