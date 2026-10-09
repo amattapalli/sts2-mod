@@ -7,7 +7,6 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Relics;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Rooms;
-using MegaCrit.Sts2.Core.Runs;
 using Usurer.UsurerCode.Character;
 using Usurer.UsurerCode.Powers;
 using Usurer.UsurerCode.Util;
@@ -43,7 +42,7 @@ public sealed class InfernalLedger : UsurerRelic
         await DebtEngine.BorrowDebt(choiceContext, Owner.Creature, InitialDebtStacks);
     }
 
-    public override async Task AfterCombatEnd(IRunState runState, CombatState? combatState, CombatRoom room)
+    public override async Task AfterCombatEnd(CombatRoom room)
     {
         await DebtEngine.SettleCombatEndDebt(Owner);
     }

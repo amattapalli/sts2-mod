@@ -200,6 +200,7 @@ public class UsurerLocalizationAndSourceAuditTests
         Assert.Contains("ExtraHoverTips", File.ReadAllText(Path.Combine(CodeDir, "Cards", "UsurerCard.cs")));
         Assert.Contains("ExtraHoverTips", File.ReadAllText(Path.Combine(CodeDir, "Relics", "UsurerRelic.cs")));
         Assert.Contains("ExtraHoverTips", File.ReadAllText(Path.Combine(CodeDir, "Powers", "UsurerPower.cs")));
+        Assert.Contains("AfterCombatEnd(CombatRoom room)", File.ReadAllText(Path.Combine(CodeDir, "Relics", "InfernalLedger.cs")));
     }
 
     [Fact]
