@@ -1,10 +1,12 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using BaseLib.Abstracts;
 using BaseLib.Extensions;
 using BaseLib.Utils;
 using Transmuter.TransmuterCode.Character;
 using Transmuter.TransmuterCode.Extensions;
 using Transmuter.TransmuterCode.Util;
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.HoverTips;
 
@@ -35,4 +37,13 @@ public abstract class TransmuterCard(int cost, CardType type, CardRarity rarity,
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
         TransmuterHoverTips.ForCard(Id.Entry);
+
+    public override async Task BeforeCardPlayed(CardPlay cardPlay)
+    {
+        if (cardPlay.Card == this && Owner?.Creature != null)
+        {
+            string trigger = Type == CardType.Attack ? "Attack" : "Cast";
+            await CreatureCmd.TriggerAnim(Owner.Creature, trigger, 0f);
+        }
+    }
 }

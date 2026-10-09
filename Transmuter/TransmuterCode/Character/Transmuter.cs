@@ -45,11 +45,19 @@ public class Transmuter : PlaceholderCharacterModel
     public override RelicPoolModel RelicPool => ModelDb.RelicPool<TransmuterRelicPool>();
     public override PotionPoolModel PotionPool => ModelDb.PotionPool<TransmuterPotionPool>();
     
+    public override float DeathAnimTime => 0.85f;
+
+    protected override IEnumerable<string> ExtraAssetPaths =>
+    [
+        "char_select_bg_transmuter.png".CharacterUiPath()
+    ];
+
     public override NCreatureVisuals? CreateCustomVisuals()
     {
         var path = "transmuter_combat.png".CharacterUiPath();
         return ResourceLoader.Exists(path)
-            ? NodeFactory<NCreatureVisuals>.CreateFromResource(path)
+            ? TransmuterVisualsAndUiPatch.AttachCombatAnimations(
+                NodeFactory<NCreatureVisuals>.CreateFromResource(path))
             : null;
     }
 

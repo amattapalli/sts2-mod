@@ -50,11 +50,19 @@ public class Usurer : PlaceholderCharacterModel
     public override RelicPoolModel RelicPool => ModelDb.RelicPool<UsurerRelicPool>();
     public override PotionPoolModel PotionPool => ModelDb.PotionPool<UsurerPotionPool>();
 
+    public override float DeathAnimTime => 0.85f;
+
+    protected override IEnumerable<string> ExtraAssetPaths =>
+    [
+        "char_select_bg_usurer.png".CharacterUiPath()
+    ];
+
     public override NCreatureVisuals? CreateCustomVisuals()
     {
         var path = "usurer_combat.png".CharacterUiPath();
         return ResourceLoader.Exists(path)
-            ? NodeFactory<NCreatureVisuals>.CreateFromResource(path)
+            ? UsurerVisualsAndUiPatch.AttachCombatAnimations(
+                NodeFactory<NCreatureVisuals>.CreateFromResource(path))
             : null;
     }
 

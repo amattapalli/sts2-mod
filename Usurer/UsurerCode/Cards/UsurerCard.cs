@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using BaseLib.Abstracts;
 using BaseLib.Extensions;
 using BaseLib.Utils;
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.HoverTips;
 using Usurer.UsurerCode.Character;
@@ -23,4 +25,13 @@ public abstract class UsurerCard(int cost, CardType type, CardRarity rarity, Tar
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
         UsurerHoverTips.ForCard(Id.Entry);
+
+    public override async Task BeforeCardPlayed(CardPlay cardPlay)
+    {
+        if (cardPlay.Card == this && Owner?.Creature != null)
+        {
+            string trigger = Type == CardType.Attack ? "Attack" : "Cast";
+            await CreatureCmd.TriggerAnim(Owner.Creature, trigger, 0f);
+        }
+    }
 }

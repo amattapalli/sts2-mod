@@ -198,9 +198,12 @@ public class UsurerLocalizationAndSourceAuditTests
         }
 
         Assert.Contains("ExtraHoverTips", File.ReadAllText(Path.Combine(CodeDir, "Cards", "UsurerCard.cs")));
+        Assert.Contains("BeforeCardPlayed(CardPlay cardPlay)", File.ReadAllText(Path.Combine(CodeDir, "Cards", "UsurerCard.cs")));
         Assert.Contains("ExtraHoverTips", File.ReadAllText(Path.Combine(CodeDir, "Relics", "UsurerRelic.cs")));
         Assert.Contains("ExtraHoverTips", File.ReadAllText(Path.Combine(CodeDir, "Powers", "UsurerPower.cs")));
         Assert.Contains("AfterCombatEnd(CombatRoom room)", File.ReadAllText(Path.Combine(CodeDir, "Relics", "InfernalLedger.cs")));
+        Assert.Contains("AttachCombatAnimations", File.ReadAllText(Path.Combine(CodeDir, "Character", "Usurer.cs")));
+        Assert.Contains("ApplyCustomCharacterSelectBackground", File.ReadAllText(Path.Combine(CodeDir, "Character", "UsurerVisualsAndUiPatch.cs")));
     }
 
     [Fact]
@@ -217,12 +220,13 @@ public class UsurerLocalizationAndSourceAuditTests
             "IfUpgraded", "InCombat", "energyPrefix", "Amount"
         };
 
-        // Verify character UI artwork exists
+        // Verify character UI artwork exists and has exact expected dimensions
         string[] charUiFiles =
         [
             "usurer_combat.png",
             "char_select_usurer.png",
             "char_select_usurer_locked.png",
+            "char_select_bg_usurer.png",
             "character_icon_usurer.png",
             "map_marker_usurer.png",
             "big_energy.png",
@@ -233,6 +237,11 @@ public class UsurerLocalizationAndSourceAuditTests
             string uiPath = Path.Combine(ImagesDir, "charui", uiFile);
             Assert.True(File.Exists(uiPath), $"Missing character UI art file: {uiPath}");
         }
+
+        LocalizationAndSourceAuditTests.AssertPngDimensions(Path.Combine(ImagesDir, "charui", "char_select_usurer.png"), 132, 195);
+        LocalizationAndSourceAuditTests.AssertPngDimensions(Path.Combine(ImagesDir, "charui", "char_select_usurer_locked.png"), 132, 195);
+        LocalizationAndSourceAuditTests.AssertPngDimensions(Path.Combine(ImagesDir, "charui", "char_select_bg_usurer.png"), 1920, 1080);
+        LocalizationAndSourceAuditTests.AssertPngDimensions(Path.Combine(ImagesDir, "charui", "usurer_combat.png"), 260, 320);
 
         // 1. Audit Cards + Card Portraits
         int concreteCardCount = 0;

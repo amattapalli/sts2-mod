@@ -225,8 +225,28 @@ public class LocalizationAndSourceAuditTests
         }
 
         Assert.Contains("ExtraHoverTips", File.ReadAllText(Path.Combine(CodeDir, "Cards", "TransmuterCard.cs")));
+        Assert.Contains("BeforeCardPlayed(CardPlay cardPlay)", File.ReadAllText(Path.Combine(CodeDir, "Cards", "TransmuterCard.cs")));
         Assert.Contains("ExtraHoverTips", File.ReadAllText(Path.Combine(CodeDir, "Relics", "TransmuterRelic.cs")));
         Assert.Contains("ExtraHoverTips", File.ReadAllText(Path.Combine(CodeDir, "Powers", "TransmuterPower.cs")));
+        Assert.Contains("AttachCombatAnimations", File.ReadAllText(Path.Combine(CodeDir, "Character", "Transmuter.cs")));
+        Assert.Contains("ApplyCustomCharacterSelectBackground", File.ReadAllText(Path.Combine(CodeDir, "Character", "TransmuterVisualsAndUiPatch.cs")));
+
+        string charUiDir = Path.Combine(RepoRoot, "Transmuter", "Transmuter", "images", "charui");
+        AssertPngDimensions(Path.Combine(charUiDir, "char_select_transmuter.png"), 132, 195);
+        AssertPngDimensions(Path.Combine(charUiDir, "char_select_transmuter_locked.png"), 132, 195);
+        AssertPngDimensions(Path.Combine(charUiDir, "char_select_bg_transmuter.png"), 1920, 1080);
+        AssertPngDimensions(Path.Combine(charUiDir, "transmuter_combat.png"), 260, 320);
+    }
+
+    internal static void AssertPngDimensions(string pngPath, int expectedWidth, int expectedHeight)
+    {
+        Assert.True(File.Exists(pngPath), $"Expected PNG file at {pngPath}");
+        byte[] bytes = File.ReadAllBytes(pngPath);
+        Assert.True(bytes.Length >= 24, $"Invalid PNG file: {pngPath}");
+        int width = (bytes[16] << 24) | (bytes[17] << 16) | (bytes[18] << 8) | bytes[19];
+        int height = (bytes[20] << 24) | (bytes[21] << 16) | (bytes[22] << 8) | bytes[23];
+        Assert.Equal(expectedWidth, width);
+        Assert.Equal(expectedHeight, height);
     }
 
     [Fact]
