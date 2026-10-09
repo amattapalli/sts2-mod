@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
-using MegaCrit.Sts2.Core.Helpers;
+using Godot;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
-using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Transmuter.TransmuterCode.Cards;
-using Transmuter.TransmuterCode.Character;
+using Transmuter.TransmuterCode.Extensions;
 using Transmuter.TransmuterCode.Powers;
 
 namespace Transmuter.TransmuterCode.Util;
@@ -59,8 +58,12 @@ public static class TransmuterHoverTips
 
         if (raw.Contains(":energyIcons(", StringComparison.Ordinal))
         {
-            string prefix = EnergyIconHelper.GetPrefix(ModelDb.CardPool<TransmuterCardPool>());
-            yield return HoverTipFactory.ForEnergyWithPrefix(prefix);
+            string iconPath = "big_energy.png".CharacterUiPath();
+            Texture2D? icon = ResourceLoader.Exists(iconPath) ? ResourceLoader.Load<Texture2D>(iconPath) : null;
+            yield return new HoverTip(
+                new LocString(StaticHoverTipsTable, "ENERGY.title"),
+                new LocString(StaticHoverTipsTable, "ENERGY.description"),
+                icon);
         }
 
         bool hasReagentWord = ContainsKeyword(raw, "Reagent") || ContainsKeyword(raw, "Reagents");

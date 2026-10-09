@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
-using MegaCrit.Sts2.Core.Helpers;
+using Godot;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
-using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Usurer.UsurerCode.Cards;
-using Usurer.UsurerCode.Character;
+using Usurer.UsurerCode.Extensions;
 using Usurer.UsurerCode.Powers;
 
 namespace Usurer.UsurerCode.Util;
@@ -58,8 +57,12 @@ public static class UsurerHoverTips
 
         if (raw.Contains(":energyIcons(", StringComparison.Ordinal))
         {
-            string prefix = EnergyIconHelper.GetPrefix(ModelDb.CardPool<UsurerCardPool>());
-            yield return HoverTipFactory.ForEnergyWithPrefix(prefix);
+            string iconPath = "big_energy.png".CharacterUiPath();
+            Texture2D? icon = ResourceLoader.Exists(iconPath) ? ResourceLoader.Load<Texture2D>(iconPath) : null;
+            yield return new HoverTip(
+                new LocString(StaticHoverTipsTable, "ENERGY.title"),
+                new LocString(StaticHoverTipsTable, "ENERGY.description"),
+                icon);
         }
 
         bool hasBorrow = ContainsKeyword(raw, "Borrow") || ContainsKeyword(raw, "Borrows");
