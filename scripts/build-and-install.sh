@@ -74,6 +74,60 @@ case "$CHARACTER" in
         ;;
 esac
 
+# Clean up duplicate local mods/BaseLib if Steam Workshop BaseLib (3737335127) is installed,
+# and ensure BaseLib + Transmuter + Usurer stay enabled in settings.save.
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    WORKSHOP_BASELIB="$HOME/Library/Application Support/Steam/steamapps/workshop/content/2868840/3737335127"
+    LOCAL_BASELIB="$HOME/Library/Application Support/Steam/steamapps/common/Slay the Spire 2/SlayTheSpire2.app/Contents/MacOS/mods/BaseLib"
+    if [ -d "$WORKSHOP_BASELIB" ] && [ -d "$LOCAL_BASELIB" ]; then
+        echo "==> Removing duplicate local mods/BaseLib so it doesn't collide with Steam Workshop BaseLib..."
+        rm -rf "$LOCAL_BASELIB"
+    fi
+
+    if command -v python3 >/dev/null 2>&1; then
+        python3 - <<'PY'
+import glob, json, os
+
+settings_paths = glob.glob(os.path.expanduser("~/Library/Application Support/Slay the Spire 2/steam/*/settings.save"))
+for path in settings_paths:
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except Exception:
+        continue
+
+    mod_settings = data.setdefault("mod_settings", {})
+    mod_settings["mods_enabled"] = True
+    old_list = mod_settings.get("mod_list") or []
+
+    # Remove duplicate local BaseLib entries and ensure BaseLib (steam_workshop),
+    # Transmuter (mods_directory), and Usurer (mods_directory) are enabled.
+    new_list = [
+        {"id": "BaseLib", "is_enabled": True, "source": "steam_workshop"},
+        {"id": "Transmuter", "is_enabled": True, "source": "mods_directory"},
+        {"id": "Usurer", "is_enabled": True, "source": "mods_directory"},
+    ]
+    seen = {("BaseLib", "steam_workshop"), ("Transmuter", "mods_directory"), ("Usurer", "mods_directory")}
+    for item in old_list:
+        mid = item.get("id")
+        src = item.get("source")
+        if mid == "BaseLib":
+            continue
+        if (mid, src) not in seen:
+            seen.add((mid, src))
+            new_list.append(item)
+
+    mod_settings["mod_list"] = new_list
+    try:
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, sort_keys=True)
+        print(f"==> Enabled BaseLib, Transmuter, and Usurer in {path}")
+    except Exception:
+        pass
+PY
+    fi
+fi
+
 if [ "$LAUNCH" = true ]; then
     echo "==> Launching Slay the Spire 2 via Steam..."
     if [[ "$OSTYPE" == "darwin"* ]]; then
