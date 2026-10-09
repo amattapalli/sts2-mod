@@ -30,17 +30,17 @@ public static class TransmuterVisualsAndUiPatch
 
     /// <summary>
     /// Ensures every model belonging to The Transmuter (cards including Token cards, relics, powers, and potions)
-    /// always resolves its energy icon pool to <see cref="TransmuterCardPool"/> even outside of an active run
+    /// always resolves its energy icon prefix to <see cref="TransmuterCardPool"/> even outside of an active run
     /// or when a token card is in <c>TokenCardPool</c>.
     /// </summary>
-    [HarmonyPatch(typeof(EnergyIconHelper), nameof(EnergyIconHelper.GetPool))]
+    [HarmonyPatch(typeof(EnergyIconHelper), nameof(EnergyIconHelper.GetPrefix), typeof(AbstractModel))]
     [HarmonyPostfix]
-    public static void EnsureTransmuterEnergyPool(AbstractModel model, ref CardPoolModel __result)
+    public static void EnsureTransmuterEnergyPrefix(AbstractModel model, ref string __result)
     {
         if (model != null && model.GetType().Assembly == typeof(Transmuter).Assembly)
         {
             EnsureEnergyAssetsCached();
-            __result = ModelDb.CardPool<TransmuterCardPool>();
+            __result = ModelDb.CardPool<TransmuterCardPool>().EnergyColorName;
         }
     }
 
