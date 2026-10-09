@@ -16,8 +16,8 @@ namespace MultiplayerTrade.MultiplayerTradeCode.Patches;
 
 /// <summary>
 /// Harmony patches that wire <see cref="TradeSessionSynchronizer"/> into <see cref="RunManager"/> lifecycle
-/// and inject "Trade Cards" buttons into <see cref="NMerchantRoom"/>, <see cref="NRestSiteRoom"/>,
-/// and <see cref="NMultiplayerPlayerExpandedState"/> during multiplayer runs.
+/// and inject hand-painted stone-and-brass "Trade Cards" plaque buttons into <see cref="NMerchantRoom"/>,
+/// <see cref="NRestSiteRoom"/>, and <see cref="NMultiplayerPlayerExpandedState"/> during multiplayer runs.
 /// </summary>
 [HarmonyPatch]
 public static class TradeUiPatches
@@ -76,7 +76,7 @@ public static class TradeUiPatches
     }
 
     /// <summary>
-    /// Injects a "Trade Cards" button into the Shop room (<see cref="NMerchantRoom"/>) in multiplayer runs.
+    /// Injects a "Trade Cards" stone-and-brass plaque button into the Shop room (<see cref="NMerchantRoom"/>) in multiplayer runs.
     /// </summary>
     /// <param name="__instance">The shop room UI node.</param>
     [HarmonyPatch(typeof(NMerchantRoom), nameof(NMerchantRoom._Ready))]
@@ -89,11 +89,11 @@ public static class TradeUiPatches
             return;
         }
 
-        AddRoomTradeButton(__instance, "MerchantTradeCardsButton", "⇄ Trade Cards");
+        AddRoomTradeButton(__instance, "MerchantTradeCardsButton", "Trade Cards");
     }
 
     /// <summary>
-    /// Injects a "Trade Cards (Free)" button into the Rest Site room (<see cref="NRestSiteRoom"/>) in multiplayer runs.
+    /// Injects a "Trade Cards" stone-and-brass plaque button into the Rest Site room (<see cref="NRestSiteRoom"/>) in multiplayer runs.
     /// </summary>
     /// <param name="__instance">The rest site room UI node.</param>
     [HarmonyPatch(typeof(NRestSiteRoom), nameof(NRestSiteRoom._Ready))]
@@ -106,11 +106,11 @@ public static class TradeUiPatches
             return;
         }
 
-        AddRoomTradeButton(__instance, "RestSiteTradeCardsButton", "⇄ Trade Cards (Free)");
+        AddRoomTradeButton(__instance, "RestSiteTradeCardsButton", "Trade Cards");
     }
 
     /// <summary>
-    /// Injects a direct "Trade Cards with Teammate" button into <see cref="NMultiplayerPlayerExpandedState"/>
+    /// Injects a direct "Trade Cards" stone-and-brass plaque button into <see cref="NMultiplayerPlayerExpandedState"/>
     /// when inspecting a remote teammate inside a Shop or Rest Site room.
     /// </summary>
     /// <param name="__instance">The expanded player state screen.</param>
@@ -135,15 +135,23 @@ public static class TradeUiPatches
             return;
         }
 
-        var tradeBtn = CreateFloatingTradeButton("ExpandedStateTradeCardsButton", "⇄ Trade Cards with Teammate");
+        Button tradeBtn = TradeUiStyle.CreatePlaqueButton(
+            name: "ExpandedStateTradeCardsButton",
+            text: "Trade Cards",
+            minSize: new Vector2(260f, 64f),
+            fontSize: 20,
+            iconFileName: "trade_icon.png",
+            iconSize: new Vector2(40f, 40f));
+
+        tradeBtn.ZIndex = 20;
         tradeBtn.AnchorLeft = 1f;
         tradeBtn.AnchorRight = 1f;
         tradeBtn.AnchorTop = 0f;
         tradeBtn.AnchorBottom = 0f;
-        tradeBtn.OffsetLeft = -330f;
-        tradeBtn.OffsetRight = -40f;
-        tradeBtn.OffsetTop = 32f;
-        tradeBtn.OffsetBottom = 86f;
+        tradeBtn.OffsetLeft = -310f;
+        tradeBtn.OffsetRight = -42f;
+        tradeBtn.OffsetTop = 28f;
+        tradeBtn.OffsetBottom = 92f;
 
         ulong partnerNetId = inspectedPlayer.NetId;
         tradeBtn.Connect(BaseButton.SignalName.Pressed, Callable.From(delegate
@@ -161,16 +169,24 @@ public static class TradeUiPatches
             return;
         }
 
-        var tradeBtn = CreateFloatingTradeButton(buttonName, labelText);
+        Button tradeBtn = TradeUiStyle.CreatePlaqueButton(
+            name: buttonName,
+            text: labelText,
+            minSize: new Vector2(264f, 68f),
+            fontSize: 21,
+            iconFileName: "trade_icon.png",
+            iconSize: new Vector2(42f, 42f));
+
+        tradeBtn.ZIndex = 20;
         // Position in the bottom-left corner, clear of the top-left multiplayer player panels and bottom-right Proceed button.
         tradeBtn.AnchorLeft = 0f;
         tradeBtn.AnchorRight = 0f;
         tradeBtn.AnchorTop = 1f;
         tradeBtn.AnchorBottom = 1f;
-        tradeBtn.OffsetLeft = 42f;
-        tradeBtn.OffsetRight = 282f;
-        tradeBtn.OffsetTop = -104f;
-        tradeBtn.OffsetBottom = -48f;
+        tradeBtn.OffsetLeft = 44f;
+        tradeBtn.OffsetRight = 308f;
+        tradeBtn.OffsetTop = -112f;
+        tradeBtn.OffsetBottom = -44f;
 
         tradeBtn.Connect(BaseButton.SignalName.Pressed, Callable.From(delegate
         {
@@ -178,53 +194,5 @@ public static class TradeUiPatches
         }));
 
         roomNode.AddChildSafely(tradeBtn);
-    }
-
-    private static Button CreateFloatingTradeButton(string name, string text)
-    {
-        var button = new Button
-        {
-            Name = name,
-            Text = text,
-            CustomMinimumSize = new Vector2(240f, 54f),
-            MouseDefaultCursorShape = Control.CursorShape.PointingHand,
-            ZIndex = 20
-        };
-        button.AddThemeFontSizeOverride("font_size", 18);
-        button.AddThemeColorOverride("font_color", new Color(0.98f, 0.92f, 0.72f));
-        button.AddThemeColorOverride("font_hover_color", new Color(1f, 0.98f, 0.88f));
-
-        button.AddThemeStyleboxOverride("normal", CreateButtonStyle(
-            new Color(0.14f, 0.24f, 0.36f, 0.95f),
-            new Color(0.85f, 0.68f, 0.28f, 0.95f)));
-        button.AddThemeStyleboxOverride("hover", CreateButtonStyle(
-            new Color(0.20f, 0.34f, 0.50f, 0.98f),
-            new Color(0.98f, 0.84f, 0.42f, 1.0f)));
-        button.AddThemeStyleboxOverride("pressed", CreateButtonStyle(
-            new Color(0.10f, 0.18f, 0.28f, 0.98f),
-            new Color(0.85f, 0.68f, 0.28f, 0.95f)));
-
-        return button;
-    }
-
-    private static StyleBoxFlat CreateButtonStyle(Color bgColor, Color borderColor)
-    {
-        return new StyleBoxFlat
-        {
-            BgColor = bgColor,
-            BorderColor = borderColor,
-            BorderWidthLeft = 2,
-            BorderWidthTop = 2,
-            BorderWidthRight = 2,
-            BorderWidthBottom = 2,
-            CornerRadiusTopLeft = 10,
-            CornerRadiusTopRight = 10,
-            CornerRadiusBottomLeft = 10,
-            CornerRadiusBottomRight = 10,
-            ContentMarginLeft = 14,
-            ContentMarginTop = 10,
-            ContentMarginRight = 14,
-            ContentMarginBottom = 10
-        };
     }
 }

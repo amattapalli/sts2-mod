@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Godot;
 using MegaCrit.Sts2.Core.CardSelection;
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Context;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Multiplayer;
@@ -25,15 +26,15 @@ using MultiplayerTrade.MultiplayerTradeCode.Rules;
 namespace MultiplayerTrade.MultiplayerTradeCode.UI;
 
 /// <summary>
-/// Full-screen overlay modal implementing the two-way multiplayer card barter window.
-/// Supports selecting a teammate (in 3–4 player co-op), accepting/declining incoming trade invites,
-/// offering 0 to 5 cards per side (including 5-for-0 gifting), inspecting offered cards with hover tips,
-/// locking offers, and confirming the trade.
+/// Full-screen overlay modal implementing the two-way multiplayer card barter window,
+/// styled with <i>Slay the Spire 2</i>'s Kreon outlined typography, <see cref="StsColors"/> palette,
+/// hand-inked stone/brass plaques, crimson swallowtail banner, and 5-slot recessed stone card racks.
 /// </summary>
 public partial class NTradeBarterModal : Control, IOverlayScreen
 {
     private static NTradeBarterModal? _activeInstance;
 
+    private PanelContainer _mainPanel = null!;
     private VBoxContainer _rootLayout = null!;
     private Label _titleLabel = null!;
     private Label _statusLabel = null!;
@@ -124,6 +125,7 @@ public partial class NTradeBarterModal : Control, IOverlayScreen
             NCapstoneContainer.Instance.Close();
         }
 
+        SfxCmd.Play(TradeUiStyle.HoverSfx);
         ShowOrRefreshModal();
     }
 
@@ -162,18 +164,19 @@ public partial class NTradeBarterModal : Control, IOverlayScreen
         centerContainer.SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
         this.AddChildSafely(centerContainer);
 
-        var mainPanel = new PanelContainer
+        _mainPanel = new PanelContainer
         {
             Name = "MainTradePanel",
-            CustomMinimumSize = new Vector2(1540f, 840f)
+            CustomMinimumSize = new Vector2(1620f, 870f)
         };
-        mainPanel.AddThemeStyleboxOverride("panel", CreatePanelStyle(
-            new Color(0.08f, 0.10f, 0.14f, 0.97f),
-            new Color(0.83f, 0.68f, 0.28f, 0.95f),
-            borderWidth: 3,
+        _mainPanel.AddThemeStyleboxOverride("panel", TradeUiStyle.CreateStonePanelStyle(
+            TradeUiStyle.StonePanelBg,
+            TradeUiStyle.BrassBorder,
+            borderWidth: 4,
             cornerRadius: 14,
-            contentMargin: 24));
-        centerContainer.AddChildSafely(mainPanel);
+            contentMargin: 24,
+            shadowSize: 28));
+        centerContainer.AddChildSafely(_mainPanel);
 
         _rootLayout = new VBoxContainer
         {
@@ -181,31 +184,80 @@ public partial class NTradeBarterModal : Control, IOverlayScreen
             SizeFlagsHorizontal = SizeFlags.ExpandFill,
             SizeFlagsVertical = SizeFlags.ExpandFill
         };
-        _rootLayout.AddThemeConstantOverride("separation", 16);
-        mainPanel.AddChildSafely(_rootLayout);
+        _rootLayout.AddThemeConstantOverride("separation", 14);
+        _mainPanel.AddChildSafely(_rootLayout);
 
-        // Header
-        var headerBox = new VBoxContainer();
+        // Ornate STS2 Crimson & Gold Swallowtail Banner Header
+        var headerBox = new VBoxContainer
+        {
+            Alignment = BoxContainer.AlignmentMode.Center
+        };
         headerBox.AddThemeConstantOverride("separation", 6);
         _rootLayout.AddChildSafely(headerBox);
 
-        _titleLabel = new Label
+        var bannerWrapper = new Control
         {
-            Text = "MULTIPLAYER CARD BARTER",
-            HorizontalAlignment = HorizontalAlignment.Center
+            CustomMinimumSize = new Vector2(960f, 84f),
+            SizeFlagsHorizontal = SizeFlags.ShrinkCenter
         };
-        _titleLabel.AddThemeFontSizeOverride("font_size", 28);
-        _titleLabel.AddThemeColorOverride("font_color", new Color(0.96f, 0.84f, 0.42f));
-        headerBox.AddChildSafely(_titleLabel);
+        headerBox.AddChildSafely(bannerWrapper);
 
-        _statusLabel = new Label
+        Texture2D? bannerTex = TradeUiStyle.LoadUiTexture("trade_banner.png");
+        if (bannerTex != null)
         {
-            Text = "Select up to 5 cards to trade (5-for-0 gifting supported). Traded cards trigger relics!",
-            HorizontalAlignment = HorizontalAlignment.Center,
-            AutowrapMode = TextServer.AutowrapMode.WordSmart
+            var bannerRect = new TextureRect
+            {
+                Name = "BannerTexture",
+                Texture = bannerTex,
+                ExpandMode = TextureRect.ExpandModeEnum.IgnoreSize,
+                StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered,
+                MouseFilter = MouseFilterEnum.Ignore
+            };
+            bannerRect.SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
+            bannerWrapper.AddChildSafely(bannerRect);
+        }
+
+        var bannerContentRow = new HBoxContainer
+        {
+            Alignment = BoxContainer.AlignmentMode.Center,
+            MouseFilter = MouseFilterEnum.Ignore
         };
-        _statusLabel.AddThemeFontSizeOverride("font_size", 18);
-        _statusLabel.AddThemeColorOverride("font_color", new Color(0.82f, 0.88f, 0.94f));
+        bannerContentRow.SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
+        bannerContentRow.AddThemeConstantOverride("separation", 14);
+        bannerWrapper.AddChildSafely(bannerContentRow);
+
+        Texture2D? tradeIconTex = TradeUiStyle.LoadUiTexture("trade_icon.png");
+        if (tradeIconTex != null)
+        {
+            var leftIcon = new TextureRect
+            {
+                Texture = tradeIconTex,
+                CustomMinimumSize = new Vector2(48f, 48f),
+                ExpandMode = TextureRect.ExpandModeEnum.IgnoreSize,
+                StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered,
+                SizeFlagsVertical = SizeFlags.ShrinkCenter,
+                MouseFilter = MouseFilterEnum.Ignore
+            };
+            bannerContentRow.AddChildSafely(leftIcon);
+        }
+
+        _titleLabel = TradeUiStyle.CreateStsLabel(
+            text: "CARD BARTER",
+            fontSize: 30,
+            color: StsColors.gold,
+            bold: true,
+            outlineSize: 10,
+            alignment: HorizontalAlignment.Center);
+        bannerContentRow.AddChildSafely(_titleLabel);
+
+        _statusLabel = TradeUiStyle.CreateStsLabel(
+            text: "Offer 0 to 5 deck cards on either side (5-for-0 gifting supported). Acquired cards trigger relics!",
+            fontSize: 19,
+            color: StsColors.cream,
+            bold: false,
+            outlineSize: 7,
+            alignment: HorizontalAlignment.Center);
+        _statusLabel.AutowrapMode = TextServer.AutowrapMode.WordSmart;
         headerBox.AddChildSafely(_statusLabel);
 
         // Body
@@ -222,9 +274,9 @@ public partial class NTradeBarterModal : Control, IOverlayScreen
         {
             Name = "FooterBar",
             Alignment = BoxContainer.AlignmentMode.Center,
-            CustomMinimumSize = new Vector2(0f, 56f)
+            CustomMinimumSize = new Vector2(0f, 64f)
         };
-        _footerBar.AddThemeConstantOverride("separation", 20);
+        _footerBar.AddThemeConstantOverride("separation", 24);
         _rootLayout.AddChildSafely(_footerBar);
 
         if (TradeSessionSynchronizer.Instance != null)
@@ -233,6 +285,7 @@ public partial class NTradeBarterModal : Control, IOverlayScreen
         }
 
         RefreshUi();
+        PlayEntranceAnimation();
     }
 
     /// <inheritdoc />
@@ -277,6 +330,21 @@ public partial class NTradeBarterModal : Control, IOverlayScreen
     {
         NHoverTipSet.Clear();
         Visible = false;
+    }
+
+    private void PlayEntranceAnimation()
+    {
+        _mainPanel.PivotOffset = _mainPanel.CustomMinimumSize * 0.5f;
+        _mainPanel.Scale = new Vector2(0.94f, 0.94f);
+        _mainPanel.Modulate = new Color(1f, 1f, 1f, 0f);
+
+        Tween tween = CreateTween().SetParallel();
+        tween.TweenProperty(_mainPanel, "scale", Vector2.One, 0.20)
+            .SetEase(Tween.EaseType.Out)
+            .SetTrans(Tween.TransitionType.Back);
+        tween.TweenProperty(_mainPanel, "modulate:a", 1f, 0.16)
+            .SetEase(Tween.EaseType.Out)
+            .SetTrans(Tween.TransitionType.Cubic);
     }
 
     private void OnSessionStateChanged(TradeSessionState? session)
@@ -349,27 +417,41 @@ public partial class NTradeBarterModal : Control, IOverlayScreen
 
     private void BuildPartnerSelectionView(TradeSessionSynchronizer sync, IRunState runState, ulong localNetId)
     {
-        _titleLabel.Text = "SELECT A TEAMMATE TO TRADE WITH";
-        _statusLabel.Text = "Choose a player in your party to open a two-way card barter window (up to 5-for-0 cards).";
+        _titleLabel.Text = "CHOOSE A TEAMMATE TO BARTER WITH";
+        _statusLabel.Text = "Select an adventurer in your party to open a two-way card barter (up to 5-for-0 cards).";
 
-        var listBox = new VBoxContainer
+        var listPanel = new PanelContainer
         {
             SizeFlagsHorizontal = SizeFlags.ShrinkCenter,
             SizeFlagsVertical = SizeFlags.ShrinkCenter,
-            CustomMinimumSize = new Vector2(680f, 0f)
+            CustomMinimumSize = new Vector2(740f, 340f)
         };
-        listBox.AddThemeConstantOverride("separation", 14);
-        _bodyContainer.AddChildSafely(listBox);
+        listPanel.AddThemeStyleboxOverride("panel", TradeUiStyle.CreateStonePanelStyle(
+            TradeUiStyle.RecessedWellBg,
+            TradeUiStyle.WeatheredBronzeBorder,
+            borderWidth: 3,
+            cornerRadius: 12,
+            contentMargin: 28));
+        _bodyContainer.AddChildSafely(listPanel);
+
+        var listBox = new VBoxContainer
+        {
+            Alignment = BoxContainer.AlignmentMode.Center
+        };
+        listBox.AddThemeConstantOverride("separation", 18);
+        listPanel.AddChildSafely(listBox);
 
         foreach (Player teammate in runState.Players.Where(p => p.NetId != localNetId))
         {
             int tradableCount = TradeEligibility.GetTradableDeckCards(teammate).Count;
             string displayName = sync.GetPlayerDisplayName(teammate.NetId);
-            Button partnerBtn = CreateStyledButton(
-                $"Trade with {displayName}  —  {tradableCount} Tradable Deck Cards",
-                new Vector2(640f, 58f),
-                new Color(0.16f, 0.27f, 0.42f),
-                new Color(0.45f, 0.72f, 0.98f));
+            Button partnerBtn = TradeUiStyle.CreatePlaqueButton(
+                name: $"TradePartner_{teammate.NetId}",
+                text: $"Barter with {displayName}   ({tradableCount} Tradable Deck Cards)",
+                minSize: new Vector2(640f, 68f),
+                fontSize: 21,
+                iconFileName: "trade_icon.png",
+                iconSize: new Vector2(40f, 40f));
 
             ulong targetNetId = teammate.NetId;
             partnerBtn.Connect(BaseButton.SignalName.Pressed, Callable.From(delegate
@@ -380,11 +462,13 @@ public partial class NTradeBarterModal : Control, IOverlayScreen
             listBox.AddChildSafely(partnerBtn);
         }
 
-        Button closeBtn = CreateStyledButton(
-            "Close",
-            new Vector2(200f, 48f),
-            new Color(0.32f, 0.16f, 0.16f),
-            new Color(0.85f, 0.42f, 0.42f));
+        Button closeBtn = TradeUiStyle.CreatePlaqueButton(
+            name: "ClosePartnerSelectButton",
+            text: "Return",
+            minSize: new Vector2(230f, 58f),
+            fontSize: 20,
+            tint: new Color(1.0f, 0.78f, 0.75f),
+            isBackOrCancel: true);
         closeBtn.Connect(BaseButton.SignalName.Pressed, Callable.From(CloseModalFromOverlay));
         _footerBar.AddChildSafely(closeBtn);
     }
@@ -392,65 +476,70 @@ public partial class NTradeBarterModal : Control, IOverlayScreen
     private void BuildIncomingInviteView(TradeSessionSynchronizer sync, TradeSessionState session)
     {
         string initiatorName = sync.GetPlayerDisplayName(session.InitiatorNetId);
-        _titleLabel.Text = "INCOMING CARD TRADE REQUEST";
-        _statusLabel.Text = $"{initiatorName} wants to trade cards with you!";
+        _titleLabel.Text = "INCOMING CARD BARTER";
+        _statusLabel.Text = $"{initiatorName} wishes to barter cards with you!";
 
         var promptPanel = new PanelContainer
         {
             SizeFlagsHorizontal = SizeFlags.ShrinkCenter,
             SizeFlagsVertical = SizeFlags.ShrinkCenter,
-            CustomMinimumSize = new Vector2(760f, 260f)
+            CustomMinimumSize = new Vector2(820f, 320f)
         };
-        promptPanel.AddThemeStyleboxOverride("panel", CreatePanelStyle(
-            new Color(0.12f, 0.15f, 0.21f, 0.95f),
-            new Color(0.45f, 0.78f, 0.95f, 0.9f),
-            borderWidth: 2,
+        promptPanel.AddThemeStyleboxOverride("panel", TradeUiStyle.CreateStonePanelStyle(
+            TradeUiStyle.RecessedWellBg,
+            TradeUiStyle.BrassBorder,
+            borderWidth: 3,
             cornerRadius: 12,
-            contentMargin: 28));
+            contentMargin: 32));
         _bodyContainer.AddChildSafely(promptPanel);
 
         var promptVBox = new VBoxContainer
         {
             Alignment = BoxContainer.AlignmentMode.Center
         };
-        promptVBox.AddThemeConstantOverride("separation", 22);
+        promptVBox.AddThemeConstantOverride("separation", 26);
         promptPanel.AddChildSafely(promptVBox);
 
-        var descLabel = new Label
-        {
-            Text = $"{initiatorName} has invited you to a two-way card barter.\n" +
-                   "• Offer 0 to 5 removable deck cards on either side (5-for-0 gifting supported).\n" +
-                   "• Cards you receive will trigger your card-acquisition relics (e.g. +15 Gold, Egg upgrades)!",
-            HorizontalAlignment = HorizontalAlignment.Center,
-            AutowrapMode = TextServer.AutowrapMode.WordSmart
-        };
-        descLabel.AddThemeFontSizeOverride("font_size", 18);
-        descLabel.AddThemeColorOverride("font_color", new Color(0.92f, 0.94f, 0.98f));
+        Label descLabel = TradeUiStyle.CreateStsLabel(
+            text: $"{initiatorName} has invited you to a two-way card barter.\n" +
+                  "• Offer 0 to 5 removable deck cards on either side (5-for-0 gifting supported).\n" +
+                  "• Cards you acquire through trade trigger your relics (Egg upgrades, +15 Gold, etc.)!",
+            fontSize: 20,
+            color: StsColors.cream,
+            bold: false,
+            outlineSize: 7,
+            alignment: HorizontalAlignment.Center);
+        descLabel.AutowrapMode = TextServer.AutowrapMode.WordSmart;
         promptVBox.AddChildSafely(descLabel);
 
         var buttonRow = new HBoxContainer
         {
             Alignment = BoxContainer.AlignmentMode.Center
         };
-        buttonRow.AddThemeConstantOverride("separation", 24);
+        buttonRow.AddThemeConstantOverride("separation", 28);
         promptVBox.AddChildSafely(buttonRow);
 
-        Button acceptBtn = CreateStyledButton(
-            "Accept Trade",
-            new Vector2(240f, 54f),
-            new Color(0.14f, 0.36f, 0.22f),
-            new Color(0.38f, 0.88f, 0.54f));
+        Button acceptBtn = TradeUiStyle.CreatePlaqueButton(
+            name: "AcceptTradeInviteButton",
+            text: "Accept Barter",
+            minSize: new Vector2(260f, 64f),
+            fontSize: 21,
+            tint: new Color(0.84f, 1.05f, 0.88f),
+            iconFileName: "trade_icon.png",
+            iconSize: new Vector2(38f, 38f));
         acceptBtn.Connect(BaseButton.SignalName.Pressed, Callable.From(delegate
         {
             sync.RespondToInvite(accepted: true);
         }));
         buttonRow.AddChildSafely(acceptBtn);
 
-        Button declineBtn = CreateStyledButton(
-            "Decline",
-            new Vector2(200f, 54f),
-            new Color(0.38f, 0.16f, 0.16f),
-            new Color(0.90f, 0.42f, 0.42f));
+        Button declineBtn = TradeUiStyle.CreatePlaqueButton(
+            name: "DeclineTradeInviteButton",
+            text: "Decline",
+            minSize: new Vector2(220f, 64f),
+            fontSize: 21,
+            tint: new Color(1.06f, 0.76f, 0.74f),
+            isBackOrCancel: true);
         declineBtn.Connect(BaseButton.SignalName.Pressed, Callable.From(delegate
         {
             sync.RespondToInvite(accepted: false, "Declined");
@@ -479,9 +568,9 @@ public partial class NTradeBarterModal : Control, IOverlayScreen
         string localName = sync.GetPlayerDisplayName(localNetId);
         string partnerName = sync.GetPlayerDisplayName(partnerNetId);
 
-        _titleLabel.Text = $"CARD TRADE  —  {localName}  ⇄  {partnerName}";
+        _titleLabel.Text = $"{localName.ToUpperInvariant()}   ⇄   {partnerName.ToUpperInvariant()}";
         _statusLabel.Text = string.IsNullOrWhiteSpace(session.StatusMessage)
-            ? "Select 0 to 5 cards on each side, Lock Offer, and Confirm Trade."
+            ? "Select 0 to 5 cards on either side, Lock Offer, and Confirm Trade."
             : session.StatusMessage;
 
         var columnsHBox = new HBoxContainer
@@ -489,12 +578,12 @@ public partial class NTradeBarterModal : Control, IOverlayScreen
             SizeFlagsHorizontal = SizeFlags.ExpandFill,
             SizeFlagsVertical = SizeFlags.ExpandFill
         };
-        columnsHBox.AddThemeConstantOverride("separation", 20);
+        columnsHBox.AddThemeConstantOverride("separation", 18);
         _bodyContainer.AddChildSafely(columnsHBox);
 
         // Left Column: Local Player Offer
         Control localColumn = BuildOfferColumn(
-            title: $"YOUR OFFER  ({localOffer.Count} / {TradeEligibility.MaxCardsPerPlayer} Cards)",
+            title: $"YOUR OFFER   ({localOffer.Count} / {TradeEligibility.MaxCardsPerPlayer})",
             subtitle: localName,
             entries: localOffer,
             isLocked: localLocked,
@@ -506,7 +595,7 @@ public partial class NTradeBarterModal : Control, IOverlayScreen
 
         // Right Column: Partner Player Offer
         Control partnerColumn = BuildOfferColumn(
-            title: $"PARTNER OFFER  ({remoteOffer.Count} / {TradeEligibility.MaxCardsPerPlayer} Cards)",
+            title: $"TEAMMATE OFFER   ({remoteOffer.Count} / {TradeEligibility.MaxCardsPerPlayer})",
             subtitle: partnerName,
             entries: remoteOffer,
             isLocked: remoteLocked,
@@ -520,11 +609,14 @@ public partial class NTradeBarterModal : Control, IOverlayScreen
         bool isNegotiating = session.Phase == TradeSessionPhase.Negotiating;
         bool validTotalCards = TradeEligibility.IsValidOfferCount(localOffer.Count, remoteOffer.Count);
 
-        Button lockBtn = CreateStyledButton(
-            localLocked ? "Unlock Offer" : "Lock Offer",
-            new Vector2(230f, 50f),
-            localLocked ? new Color(0.36f, 0.28f, 0.12f) : new Color(0.16f, 0.30f, 0.44f),
-            localLocked ? new Color(0.95f, 0.76f, 0.32f) : new Color(0.45f, 0.78f, 0.98f));
+        Button lockBtn = TradeUiStyle.CreatePlaqueButton(
+            name: "ToggleLockOfferButton",
+            text: localLocked ? "Unlock Offer" : "Lock Offer",
+            minSize: new Vector2(250f, 58f),
+            fontSize: 20,
+            tint: localLocked ? new Color(1.06f, 0.96f, 0.72f) : Colors.White,
+            iconFileName: localLocked ? "lock_closed.png" : "lock_open.png",
+            iconSize: new Vector2(30f, 30f));
         lockBtn.Disabled = !isNegotiating;
         lockBtn.Connect(BaseButton.SignalName.Pressed, Callable.From(delegate
         {
@@ -534,13 +626,16 @@ public partial class NTradeBarterModal : Control, IOverlayScreen
 
         bool canConfirm = isNegotiating && localLocked && remoteLocked && validTotalCards && !localConfirmed;
         string confirmText = localConfirmed
-            ? "Waiting for Partner Confirm..."
-            : (validTotalCards ? "Confirm Trade" : "Offer ≥1 Card to Confirm");
-        Button confirmBtn = CreateStyledButton(
-            confirmText,
-            new Vector2(280f, 50f),
-            canConfirm ? new Color(0.14f, 0.38f, 0.22f) : new Color(0.18f, 0.20f, 0.24f),
-            canConfirm ? new Color(0.40f, 0.92f, 0.56f) : new Color(0.42f, 0.45f, 0.50f));
+            ? "Awaiting Teammate..."
+            : (validTotalCards ? "Confirm Trade" : "Offer ≥1 Card");
+        Button confirmBtn = TradeUiStyle.CreatePlaqueButton(
+            name: "ConfirmTradeButton",
+            text: confirmText,
+            minSize: new Vector2(290f, 58f),
+            fontSize: 20,
+            tint: canConfirm ? new Color(0.84f, 1.08f, 0.88f) : new Color(0.75f, 0.74f, 0.72f),
+            iconFileName: "trade_icon.png",
+            iconSize: new Vector2(34f, 34f));
         confirmBtn.Disabled = !canConfirm;
         confirmBtn.Connect(BaseButton.SignalName.Pressed, Callable.From(delegate
         {
@@ -548,11 +643,13 @@ public partial class NTradeBarterModal : Control, IOverlayScreen
         }));
         _footerBar.AddChildSafely(confirmBtn);
 
-        Button cancelBtn = CreateStyledButton(
-            "Cancel Trade",
-            new Vector2(200f, 50f),
-            new Color(0.36f, 0.15f, 0.15f),
-            new Color(0.88f, 0.40f, 0.40f));
+        Button cancelBtn = TradeUiStyle.CreatePlaqueButton(
+            name: "CancelTradeButton",
+            text: "Cancel Trade",
+            minSize: new Vector2(230f, 58f),
+            fontSize: 20,
+            tint: new Color(1.06f, 0.76f, 0.74f),
+            isBackOrCancel: true);
         cancelBtn.Connect(BaseButton.SignalName.Pressed, Callable.From(delegate
         {
             sync.CancelActiveSession("Trade cancelled.");
@@ -572,22 +669,21 @@ public partial class NTradeBarterModal : Control, IOverlayScreen
         TradeSessionSynchronizer sync)
     {
         Color borderColor = isConfirmed
-            ? new Color(0.32f, 0.95f, 0.88f, 0.95f)
-            : (isLocked
-                ? new Color(0.38f, 0.88f, 0.52f, 0.95f)
-                : new Color(0.42f, 0.48f, 0.58f, 0.85f));
+            ? StsColors.aqua
+            : (isLocked ? StsColors.gold : TradeUiStyle.WeatheredBronzeBorder);
 
         var panel = new PanelContainer
         {
             SizeFlagsHorizontal = SizeFlags.ExpandFill,
             SizeFlagsVertical = SizeFlags.ExpandFill
         };
-        panel.AddThemeStyleboxOverride("panel", CreatePanelStyle(
-            new Color(0.11f, 0.14f, 0.19f, 0.95f),
+        panel.AddThemeStyleboxOverride("panel", TradeUiStyle.CreateStonePanelStyle(
+            TradeUiStyle.RecessedWellBg,
             borderColor,
-            borderWidth: 2,
-            cornerRadius: 10,
-            contentMargin: 16));
+            borderWidth: isLocked || isConfirmed ? 3 : 2,
+            cornerRadius: 12,
+            contentMargin: 16,
+            shadowSize: 12));
 
         var colVBox = new VBoxContainer
         {
@@ -597,7 +693,7 @@ public partial class NTradeBarterModal : Control, IOverlayScreen
         colVBox.AddThemeConstantOverride("separation", 12);
         panel.AddChildSafely(colVBox);
 
-        // Top row: Column Title + Lock Badge
+        // Top row: Column Title + Padlock Status Badge
         var topRow = new HBoxContainer
         {
             SizeFlagsHorizontal = SizeFlags.ExpandFill
@@ -608,160 +704,193 @@ public partial class NTradeBarterModal : Control, IOverlayScreen
         {
             SizeFlagsHorizontal = SizeFlags.ExpandFill
         };
+        titleVBox.AddThemeConstantOverride("separation", 2);
         topRow.AddChildSafely(titleVBox);
 
-        var colTitle = new Label
-        {
-            Text = title
-        };
-        colTitle.AddThemeFontSizeOverride("font_size", 20);
-        colTitle.AddThemeColorOverride("font_color", new Color(0.95f, 0.90f, 0.72f));
+        Label colTitle = TradeUiStyle.CreateStsLabel(
+            text: title,
+            fontSize: 21,
+            color: StsColors.gold,
+            bold: true,
+            outlineSize: 8);
         titleVBox.AddChildSafely(colTitle);
 
-        var subLabel = new Label
-        {
-            Text = subtitle
-        };
-        subLabel.AddThemeFontSizeOverride("font_size", 15);
-        subLabel.AddThemeColorOverride("font_color", new Color(0.70f, 0.78f, 0.88f));
+        Label subLabel = TradeUiStyle.CreateStsLabel(
+            text: subtitle,
+            fontSize: 16,
+            color: StsColors.halfTransparentCream,
+            bold: false,
+            outlineSize: 6);
         titleVBox.AddChildSafely(subLabel);
 
+        var statusBadgeRow = new HBoxContainer
+        {
+            Alignment = BoxContainer.AlignmentMode.End,
+            SizeFlagsVertical = SizeFlags.ShrinkCenter
+        };
+        statusBadgeRow.AddThemeConstantOverride("separation", 8);
+        topRow.AddChildSafely(statusBadgeRow);
+
+        Texture2D? lockTex = TradeUiStyle.LoadUiTexture(isLocked || isConfirmed ? "lock_closed.png" : "lock_open.png");
+        if (lockTex != null)
+        {
+            var lockIcon = new TextureRect
+            {
+                Texture = lockTex,
+                CustomMinimumSize = new Vector2(28f, 28f),
+                ExpandMode = TextureRect.ExpandModeEnum.IgnoreSize,
+                StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered,
+                SizeFlagsVertical = SizeFlags.ShrinkCenter,
+                MouseFilter = MouseFilterEnum.Ignore
+            };
+            statusBadgeRow.AddChildSafely(lockIcon);
+        }
+
         string badgeText = isConfirmed
-            ? "CONFIRMED ✓✓"
-            : (isLocked ? "LOCKED ✓" : "UNLOCKED");
+            ? "CONFIRMED"
+            : (isLocked ? "LOCKED" : "UNLOCKED");
         Color badgeColor = isConfirmed
-            ? new Color(0.35f, 0.96f, 0.90f)
-            : (isLocked ? new Color(0.42f, 0.92f, 0.56f) : new Color(0.88f, 0.74f, 0.38f));
+            ? StsColors.aqua
+            : (isLocked ? StsColors.gold : StsColors.halfTransparentCream);
 
-        var badgeLabel = new Label
-        {
-            Text = badgeText,
-            VerticalAlignment = VerticalAlignment.Center
-        };
-        badgeLabel.AddThemeFontSizeOverride("font_size", 18);
-        badgeLabel.AddThemeColorOverride("font_color", badgeColor);
-        topRow.AddChildSafely(badgeLabel);
+        Label badgeLabel = TradeUiStyle.CreateStsLabel(
+            text: badgeText,
+            fontSize: 18,
+            color: badgeColor,
+            bold: true,
+            outlineSize: 8);
+        statusBadgeRow.AddChildSafely(badgeLabel);
 
-        // Card slots area
-        var cardsScroll = new ScrollContainer
-        {
-            SizeFlagsHorizontal = SizeFlags.ExpandFill,
-            SizeFlagsVertical = SizeFlags.ExpandFill,
-            HorizontalScrollMode = ScrollContainer.ScrollMode.Auto,
-            VerticalScrollMode = ScrollContainer.ScrollMode.Disabled
-        };
-        colVBox.AddChildSafely(cardsScroll);
-
+        // Fixed 5-Slot Recessed Stone Card Rack
         var cardsRow = new HBoxContainer
         {
             SizeFlagsHorizontal = SizeFlags.ExpandFill,
             SizeFlagsVertical = SizeFlags.ExpandFill,
             Alignment = BoxContainer.AlignmentMode.Center
         };
-        cardsRow.AddThemeConstantOverride("separation", 10);
-        cardsScroll.AddChildSafely(cardsRow);
+        cardsRow.AddThemeConstantOverride("separation", 8);
+        colVBox.AddChildSafely(cardsRow);
 
-        if (entries.Count == 0)
+        for (int i = 0; i < TradeEligibility.MaxCardsPerPlayer; i++)
         {
-            var emptyLabel = new Label
+            int slotIndex = i;
+            if (slotIndex < entries.Count)
             {
-                Text = "0 Cards Offered\n(Supports 5-for-0 Gifting / Asymmetric Swaps)",
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-                SizeFlagsHorizontal = SizeFlags.ExpandFill,
-                SizeFlagsVertical = SizeFlags.ExpandFill
-            };
-            emptyLabel.AddThemeFontSizeOverride("font_size", 17);
-            emptyLabel.AddThemeColorOverride("font_color", new Color(0.60f, 0.66f, 0.74f));
-            cardsRow.AddChildSafely(emptyLabel);
-        }
-        else
-        {
-            for (int i = 0; i < entries.Count; i++)
+                Control filledSlot = BuildFilledCardSocket(entries[slotIndex], slotIndex, isLocalEditable && !isLocked, sync);
+                cardsRow.AddChildSafely(filledSlot);
+            }
+            else
             {
-                int slotIndex = i;
-                TradeOfferEntry entry = entries[i];
-                Control cardSlot = BuildOfferedCardVisualSlot(entry, slotIndex, isLocalEditable, sync);
-                cardsRow.AddChildSafely(cardSlot);
+                Control emptySlot = BuildEmptyCardSocket(slotIndex, isLocalEditable && !isLocked, runState, sync);
+                cardsRow.AddChildSafely(emptySlot);
             }
         }
 
-        // Action row for the local player's offer
+        // Action row for the local player's offer (or symmetric spacer for partner column)
+        var actionsRow = new HBoxContainer
+        {
+            Alignment = BoxContainer.AlignmentMode.Center,
+            CustomMinimumSize = new Vector2(0f, 52f)
+        };
+        actionsRow.AddThemeConstantOverride("separation", 16);
+        colVBox.AddChildSafely(actionsRow);
+
         if (isLocalEditable)
         {
-            var actionsRow = new HBoxContainer
-            {
-                Alignment = BoxContainer.AlignmentMode.Center
-            };
-            actionsRow.AddThemeConstantOverride("separation", 14);
-            colVBox.AddChildSafely(actionsRow);
-
             Player? localPlayer = LocalContext.GetMe(runState);
             int eligibleCount = TradeEligibility.GetTradableDeckCards(localPlayer).Count;
 
-            Button selectCardsBtn = CreateStyledButton(
-                $"Select Deck Cards (1–{Math.Min(TradeEligibility.MaxCardsPerPlayer, Math.Max(1, eligibleCount))})",
-                new Vector2(290f, 44f),
-                new Color(0.18f, 0.32f, 0.48f),
-                new Color(0.48f, 0.80f, 0.98f));
-            selectCardsBtn.Disabled = eligibleCount == 0;
+            Button selectCardsBtn = TradeUiStyle.CreatePlaqueButton(
+                name: "SelectDeckCardsButton",
+                text: $"Choose Deck Cards (1–{Math.Min(TradeEligibility.MaxCardsPerPlayer, Math.Max(1, eligibleCount))})",
+                minSize: new Vector2(310f, 50f),
+                fontSize: 18);
+            selectCardsBtn.Disabled = eligibleCount == 0 || isLocked;
             selectCardsBtn.Connect(BaseButton.SignalName.Pressed, Callable.From(delegate
             {
                 TaskHelper.RunSafely(OpenLocalDeckCardPickerAsync(runState, sync));
             }));
             actionsRow.AddChildSafely(selectCardsBtn);
 
-            Button clearOfferBtn = CreateStyledButton(
-                "Clear (Offer 0 Cards)",
-                new Vector2(220f, 44f),
-                new Color(0.28f, 0.22f, 0.16f),
-                new Color(0.82f, 0.64f, 0.38f));
-            clearOfferBtn.Disabled = entries.Count == 0;
+            Button clearOfferBtn = TradeUiStyle.CreatePlaqueButton(
+                name: "ClearOfferButton",
+                text: "Clear Offer (0 Cards)",
+                minSize: new Vector2(220f, 50f),
+                fontSize: 18,
+                tint: new Color(0.95f, 0.86f, 0.78f),
+                isBackOrCancel: true);
+            clearOfferBtn.Disabled = entries.Count == 0 || isLocked;
             clearOfferBtn.Connect(BaseButton.SignalName.Pressed, Callable.From(delegate
             {
                 sync.SetLocalOfferedCards(Array.Empty<CardModel>());
             }));
             actionsRow.AddChildSafely(clearOfferBtn);
         }
+        else
+        {
+            Label hintLabel = TradeUiStyle.CreateStsLabel(
+                text: entries.Count == 0
+                    ? "0 Cards Offered (5-for-0 Gifting Supported)"
+                    : "Hover any offered card above to inspect its full text & upgrades",
+                fontSize: 16,
+                color: StsColors.halfTransparentCream,
+                bold: false,
+                outlineSize: 6,
+                alignment: HorizontalAlignment.Center);
+            actionsRow.AddChildSafely(hintLabel);
+        }
 
         return panel;
     }
 
-    private static Control BuildOfferedCardVisualSlot(
+    private static Control BuildFilledCardSocket(
         TradeOfferEntry entry,
         int slotIndex,
-        bool isLocalEditable,
+        bool canRemove,
         TradeSessionSynchronizer sync)
     {
         var slotVBox = new VBoxContainer
         {
-            CustomMinimumSize = new Vector2(132f, 270f),
+            CustomMinimumSize = new Vector2(142f, 286f),
             SizeFlagsVertical = SizeFlags.ShrinkCenter,
             Alignment = BoxContainer.AlignmentMode.Center
         };
         slotVBox.AddThemeConstantOverride("separation", 6);
 
-        CardModel previewCard = TradeEligibility.CreatePreviewCard(entry.Card);
-
-        var cardHolderWrapper = new Control
+        var socketFrame = new Control
         {
-            CustomMinimumSize = new Vector2(132f, 196f),
+            CustomMinimumSize = new Vector2(142f, 202f),
             MouseFilter = MouseFilterEnum.Pass
         };
-        slotVBox.AddChildSafely(cardHolderWrapper);
+        slotVBox.AddChildSafely(socketFrame);
 
+        Texture2D? socketTex = TradeUiStyle.LoadUiTexture("card_slot_empty.png");
+        if (socketTex != null)
+        {
+            var socketBg = new TextureRect
+            {
+                Texture = socketTex,
+                ExpandMode = TextureRect.ExpandModeEnum.IgnoreSize,
+                StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered,
+                MouseFilter = MouseFilterEnum.Ignore
+            };
+            socketBg.SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
+            socketFrame.AddChildSafely(socketBg);
+        }
+
+        CardModel previewCard = TradeEligibility.CreatePreviewCard(entry.Card);
         NCard? nCard = NCard.Create(previewCard);
         if (nCard != null)
         {
             NPreviewCardHolder? previewHolder = NPreviewCardHolder.Create(
                 nCard,
                 showHoverTips: true,
-                scaleOnHover: false);
+                scaleOnHover: true);
             if (previewHolder != null)
             {
-                previewHolder.SetCardScale(new Vector2(0.42f, 0.42f));
-                previewHolder.Position = new Vector2(66f, 98f);
-                cardHolderWrapper.AddChildSafely(previewHolder);
+                previewHolder.SetCardScale(new Vector2(0.44f, 0.44f));
+                previewHolder.Position = new Vector2(71f, 101f);
+                socketFrame.AddChildSafely(previewHolder);
                 nCard.UpdateVisuals(PileType.Deck, CardPreviewMode.Normal);
             }
             else
@@ -770,33 +899,117 @@ public partial class NTradeBarterModal : Control, IOverlayScreen
             }
         }
 
-        var cardNameLabel = new Label
-        {
-            Text = TradeEligibility.FormatCardLabel(previewCard),
-            HorizontalAlignment = HorizontalAlignment.Center,
-            AutowrapMode = TextServer.AutowrapMode.WordSmart,
-            CustomMinimumSize = new Vector2(128f, 36f)
-        };
-        cardNameLabel.AddThemeFontSizeOverride("font_size", 13);
-        cardNameLabel.AddThemeColorOverride("font_color", previewCard.IsUpgraded
-            ? new Color(0.48f, 0.96f, 0.56f)
-            : new Color(0.92f, 0.94f, 0.98f));
+        Label cardNameLabel = TradeUiStyle.CreateStsLabel(
+            text: TradeEligibility.FormatCardLabel(previewCard),
+            fontSize: 14,
+            color: previewCard.IsUpgraded ? StsColors.green : StsColors.cream,
+            bold: true,
+            outlineSize: 6,
+            alignment: HorizontalAlignment.Center);
+        cardNameLabel.AutowrapMode = TextServer.AutowrapMode.WordSmart;
+        cardNameLabel.CustomMinimumSize = new Vector2(138f, 38f);
         slotVBox.AddChildSafely(cardNameLabel);
 
-        if (isLocalEditable)
+        if (canRemove)
         {
-            Button removeBtn = CreateStyledButton(
-                "Remove",
-                new Vector2(110f, 30f),
-                new Color(0.34f, 0.16f, 0.16f),
-                new Color(0.84f, 0.42f, 0.42f),
-                fontSize: 13);
+            Button removeBtn = TradeUiStyle.CreatePlaqueButton(
+                name: $"RemoveSlot_{slotIndex}",
+                text: "Remove",
+                minSize: new Vector2(118f, 34f),
+                fontSize: 14,
+                tint: new Color(1.06f, 0.76f, 0.74f),
+                isBackOrCancel: true);
             removeBtn.Connect(BaseButton.SignalName.Pressed, Callable.From(delegate
             {
                 sync.RemoveCardFromLocalOfferAt(slotIndex);
             }));
             slotVBox.AddChildSafely(removeBtn);
         }
+        else
+        {
+            var spacer = new Control
+            {
+                CustomMinimumSize = new Vector2(118f, 34f)
+            };
+            slotVBox.AddChildSafely(spacer);
+        }
+
+        return slotVBox;
+    }
+
+    private Control BuildEmptyCardSocket(
+        int slotIndex,
+        bool isClickableToSelect,
+        IRunState runState,
+        TradeSessionSynchronizer sync)
+    {
+        var slotVBox = new VBoxContainer
+        {
+            CustomMinimumSize = new Vector2(142f, 286f),
+            SizeFlagsVertical = SizeFlags.ShrinkCenter,
+            Alignment = BoxContainer.AlignmentMode.Center
+        };
+        slotVBox.AddThemeConstantOverride("separation", 6);
+
+        var socketFrame = new Control
+        {
+            CustomMinimumSize = new Vector2(142f, 202f),
+            MouseFilter = isClickableToSelect ? MouseFilterEnum.Stop : MouseFilterEnum.Ignore,
+            MouseDefaultCursorShape = isClickableToSelect ? CursorShape.PointingHand : CursorShape.Arrow
+        };
+        slotVBox.AddChildSafely(socketFrame);
+
+        Texture2D? socketTex = TradeUiStyle.LoadUiTexture("card_slot_empty.png");
+        if (socketTex != null)
+        {
+            var socketBg = new TextureRect
+            {
+                Texture = socketTex,
+                ExpandMode = TextureRect.ExpandModeEnum.IgnoreSize,
+                StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered,
+                Modulate = new Color(1f, 1f, 1f, 0.88f),
+                MouseFilter = MouseFilterEnum.Ignore
+            };
+            socketBg.SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
+            socketFrame.AddChildSafely(socketBg);
+
+            if (isClickableToSelect)
+            {
+                socketFrame.MouseEntered += () =>
+                {
+                    SfxCmd.Play(TradeUiStyle.HoverSfx);
+                    socketBg.Modulate = new Color(1.18f, 1.12f, 0.95f, 1f);
+                };
+                socketFrame.MouseExited += () =>
+                {
+                    socketBg.Modulate = new Color(1f, 1f, 1f, 0.88f);
+                };
+                socketFrame.GuiInput += (@event) =>
+                {
+                    if (@event is InputEventMouseButton { Pressed: true, ButtonIndex: MouseButton.Left })
+                    {
+                        SfxCmd.Play(TradeUiStyle.ClickSfx);
+                        TaskHelper.RunSafely(OpenLocalDeckCardPickerAsync(runState, sync));
+                    }
+                };
+            }
+        }
+
+        Label emptySlotLabel = TradeUiStyle.CreateStsLabel(
+            text: isClickableToSelect ? $"Slot {slotIndex + 1}\n(+ Click to Offer)" : $"Empty Slot {slotIndex + 1}",
+            fontSize: 13,
+            color: StsColors.halfTransparentCream,
+            bold: false,
+            outlineSize: 5,
+            alignment: HorizontalAlignment.Center);
+        emptySlotLabel.CustomMinimumSize = new Vector2(138f, 38f);
+        slotVBox.AddChildSafely(emptySlotLabel);
+
+        var bottomSpacer = new Control
+        {
+            CustomMinimumSize = new Vector2(118f, 34f)
+        };
+        slotVBox.AddChildSafely(bottomSpacer);
 
         return slotVBox;
     }
@@ -853,62 +1066,6 @@ public partial class NTradeBarterModal : Control, IOverlayScreen
                 RefreshUi();
             }
         }
-    }
-
-    private static Button CreateStyledButton(
-        string text,
-        Vector2 minSize,
-        Color bgColor,
-        Color borderColor,
-        int fontSize = 16)
-    {
-        var button = new Button
-        {
-            Text = text,
-            CustomMinimumSize = minSize,
-            MouseDefaultCursorShape = CursorShape.PointingHand
-        };
-        button.AddThemeFontSizeOverride("font_size", fontSize);
-        button.AddThemeColorOverride("font_color", new Color(0.96f, 0.96f, 0.98f));
-        button.AddThemeColorOverride("font_hover_color", new Color(1f, 0.95f, 0.75f));
-        button.AddThemeColorOverride("font_disabled_color", new Color(0.50f, 0.52f, 0.56f));
-
-        button.AddThemeStyleboxOverride("normal", CreatePanelStyle(bgColor, borderColor, 2, 8, 10));
-        button.AddThemeStyleboxOverride("hover", CreatePanelStyle(bgColor.Lightened(0.14f), borderColor.Lightened(0.2f), 2, 8, 10));
-        button.AddThemeStyleboxOverride("pressed", CreatePanelStyle(bgColor.Darkened(0.15f), borderColor, 2, 8, 10));
-        button.AddThemeStyleboxOverride("disabled", CreatePanelStyle(
-            new Color(0.14f, 0.15f, 0.18f, 0.7f),
-            new Color(0.30f, 0.32f, 0.36f, 0.6f),
-            1,
-            8,
-            10));
-        return button;
-    }
-
-    private static StyleBoxFlat CreatePanelStyle(
-        Color bgColor,
-        Color borderColor,
-        int borderWidth,
-        int cornerRadius,
-        int contentMargin)
-    {
-        return new StyleBoxFlat
-        {
-            BgColor = bgColor,
-            BorderColor = borderColor,
-            BorderWidthLeft = borderWidth,
-            BorderWidthTop = borderWidth,
-            BorderWidthRight = borderWidth,
-            BorderWidthBottom = borderWidth,
-            CornerRadiusTopLeft = cornerRadius,
-            CornerRadiusTopRight = cornerRadius,
-            CornerRadiusBottomLeft = cornerRadius,
-            CornerRadiusBottomRight = cornerRadius,
-            ContentMarginLeft = contentMargin,
-            ContentMarginTop = contentMargin,
-            ContentMarginRight = contentMargin,
-            ContentMarginBottom = contentMargin
-        };
     }
 
     private static void ClearChildren(Node parent)
